@@ -1,0 +1,91 @@
+﻿@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@model IEnumerable<Scrapper.Domain.ScrappedDocument>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<script type="text/javascript">
+    var model = JSON.parse('[' + @Html.Raw(Json.Encode(Model.Select(d => d.ScrappedJson))) + ']');
+    var indexWithAuthor = '@Url.Action("Index",new {author = "xxx"})';
+</script>
+
+<h1>By Date</h1>
+<div id="bubbleChart"></div>
+
+<h1>By Author By Date</h1>
+<div id="customChart"></div>
+
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Id)
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.ScrappedJson)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.CreationDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UpdateDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Uri)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ScrapIdentifier)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Id)
+        </td>
+        @*<td>
+            @Html.Display(JObject.Parse(item.ScrappedJson).ToString(Formatting.Indented))
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.CreationDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UpdateDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Uri)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ScrapIdentifier)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Code }) |
+            @Html.ActionLink("Details", "Details", new { code=item.Code }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Code })
+        </td>
+    </tr>
+}
+
+</table>
+
+
+@*<link rel="stylesheet" href="~/Content/histogram.css" />*@
+<link rel="stylesheet" href="~/Content/performance.css" />
+<script type="text/javascript" src="~/Scripts/d3.js"></script>
+<script type="text/javascript" src="~/Scripts/linq.js"></script>
+@*<script type="text/javascript" src="~/Scripts/Histogram.js"></script>*@
+<script type="text/javascript" src="~/Scripts/Data.js"></script>

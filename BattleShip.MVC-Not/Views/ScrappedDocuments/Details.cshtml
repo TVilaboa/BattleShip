@@ -1,0 +1,82 @@
+﻿@using Scrapper.Domain
+@model Scrapper.Domain.ScrappedDocument
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+<script src="~/Scripts/jquery-2.2.3.min.js"></script>
+<script src="~/Scripts/prettyprint.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var tbl = prettyPrint(JSON.parse(@Html.Raw(Json.Encode(Model.ScrappedJson))));
+        $('#Json').html(tbl);
+    });
+</script>
+<div>
+    <h4>ScrappedDocument</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ScrappedJson)
+        </dt>
+
+        <dd id="Json">
+           @* @Html.DisplayFor(model => model.ScrappedJson)*@
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreationDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreationDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UpdateDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UpdateDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Uri)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Uri)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ScrapIdentifier)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ScrapIdentifier)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Code }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

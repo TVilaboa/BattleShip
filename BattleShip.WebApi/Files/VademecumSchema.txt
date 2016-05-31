@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Vademecum Product",
+  "type": "object",
+  "path": "/prvademecum.com/products",
+  "describes": ["title", "laboratory"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "selector": "#resultados > h1",
+      "extract": "text"
+    },
+    "laboratory": {
+      "type": "string",
+      "selector": "#resultados > h2",
+      "extract": "text"
+    },
+    "abstract": {
+      "type": "string",
+      "selector": "#resultados > :nth-child(3)",
+      "extract": "text"
+    },
+    "content": {
+      "type": "array",
+      "selector": "#resultados > :nth-child(n+4)",
+      "extract": "text",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
