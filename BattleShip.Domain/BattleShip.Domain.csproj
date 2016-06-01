@@ -54,11 +54,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain.cs" />
+    <Compile Include="Hit.cs" />
     <Compile Include="IEntity.cs" />
+    <Compile Include="Map.cs" />
     <Compile Include="Path.cs" />
+    <Compile Include="Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schema.cs" />
     <Compile Include="ScrappedDocument.cs" />
+    <Compile Include="Ship.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
