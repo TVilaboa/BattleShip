@@ -12,18 +12,18 @@
         }
         public  void InitializeDatabase()
         {
-            ScrapperDataContext.InitializeDatabase();
+            BattleShipDataContext.InitializeDatabase();
         }
         public  void InstanceContext(bool hasLazyLoad = true)
         {
 
-            if (ScrapperDataContext.GetInstance == null)
-                System.Web.HttpContext.Current.Items["ScrapperDataContext"] = new ScrapperDataContext();
+            if (BattleShipDataContext.GetInstance == null)
+                System.Web.HttpContext.Current.Items["ScrapperDataContext"] = new BattleShipDataContext();
         }
         public  void DisposeContext()
         {
 
-            if (ScrapperDataContext.GetInstance != null)
+            if (BattleShipDataContext.GetInstance != null)
             {
                 //((PiramideDbContext)System.Web.HttpContext.Current.Items["PiramideDbContext"]).Dispose();
                 System.Web.HttpContext.Current.Items["ScrapperDataContext"] = null;

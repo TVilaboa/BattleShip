@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Microsoft.AspNet.Identity
+@{
     ViewBag.Title = "Chat";
 }
 
@@ -41,7 +42,7 @@
                     + '</strong>: ' + htmlEncode(message) + '</li>');
             };
             // Get the user name and store it to prepend to messages.
-            $('#displayname').val(prompt('Enter your name:', ''));
+            $('#displayname').val('@User.Identity.GetUserName()');
             // Set initial focus to message input box.
             $('#message').focus();
             // Start the connection.
@@ -52,6 +53,7 @@
                     // Clear text box and reset focus for next comment.
                     $('#message').val('').focus();
                 });
+               chat.server.joined();
             });
         });
         // This optional function html-encodes messages for display in the page.

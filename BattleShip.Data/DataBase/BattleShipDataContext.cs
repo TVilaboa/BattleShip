@@ -4,21 +4,26 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Web;
 using BattleShip.Domain;
 using Elmah.Contrib.EntityFramework;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace BattleShip.Data.DataBase
 {
-    public class ScrapperDataContext : DbContext
+    public class BattleShipDataContext : IdentityDbContext<User>
     {
-        private static ScrapperDataContext instance;
-        public static ScrapperDataContext GetInstance
+        private static BattleShipDataContext instance;
+        public static BattleShipDataContext GetInstance
         {
             get
             {
-                return ((ScrapperDataContext)HttpContext.Current.Items["ScrapperDataContext"]);
+                return ((BattleShipDataContext)HttpContext.Current.Items["ScrapperDataContext"]);
             }            
         }
-        public ScrapperDataContext()
-            : base("DataBase")
+        public static BattleShipDataContext Create()
+        {
+            return new BattleShipDataContext();
+        }
+        public BattleShipDataContext()
+            : base("DefaultConnection")
         {
             this.Configuration.AutoDetectChangesEnabled = true;
             this.Configuration.LazyLoadingEnabled = true;
@@ -27,11 +32,11 @@ namespace BattleShip.Data.DataBase
 
         public static void InitializeDatabase()
         {
-            Database.SetInitializer(new ScrapperDataBaseInitializer());
+            Database.SetInitializer(new BattleShipDataBaseInitializer());
 
-            HttpContext.Current.Items["ScrapperDataContext"] = new ScrapperDataContext();
+            HttpContext.Current.Items["ScrapperDataContext"] = new BattleShipDataContext();
             //if (!ScrapperDataContext.GetInstance.Database.Exists())
-            ScrapperDataContext.GetInstance.Database.Initialize(true);
+            BattleShipDataContext.GetInstance.Database.Initialize(true);
             //HttpContext.Current.Items["ScrapperDataContext"] = null;
         }
         

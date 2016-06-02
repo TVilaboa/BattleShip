@@ -8,21 +8,21 @@ using Path = BattleShip.Domain.Path;
 
 namespace BattleShip.Data.DataBase
 {
-    public class ScrapperDataBaseInitializer : DropCreateDatabaseIfModelChanges<ScrapperDataContext>
+    public class BattleShipDataBaseInitializer : DropCreateDatabaseIfModelChanges<BattleShipDataContext>
     {
 
-        protected override void Seed(ScrapperDataContext context)
+        protected override void Seed(BattleShipDataContext context)
         {
-            SeedDomainAndPaths(context);
+            //SeedDomainAndPaths(context);
 
-            SeedSchemas(context);
+            //SeedSchemas(context);
 
             SeedELMAHSps(context);
 
             base.Seed(context);
         }
 
-        private List<Domain.Domain> SeedDomainAndPaths(ScrapperDataContext context)
+        private List<Domain.Domain> SeedDomainAndPaths(BattleShipDataContext context)
         {
             List<Domain.Domain> domains = new List<Domain.Domain>();
             List<Path> laNacionPaths = new List<Path>() { new Path() { Code = "article", Name = "La Nacion Article" } };
@@ -35,7 +35,7 @@ namespace BattleShip.Data.DataBase
             return domains;
         }
 
-        private void SeedSchemas(ScrapperDataContext context)
+        private void SeedSchemas(BattleShipDataContext context)
         {
             var lanacionDomain = context.Domains.First(d => d.Code == "lanacion");
             var articlePath = lanacionDomain.Paths.First(p => p.Code == "article");
@@ -46,7 +46,7 @@ namespace BattleShip.Data.DataBase
             context.SaveChanges();
         }
 
-        private void SeedELMAHSps(ScrapperDataContext context)
+        private void SeedELMAHSps(BattleShipDataContext context)
         {
             // Add Stored Procedures
             foreach (var file in Directory.GetFiles(HttpContext.Current.Server.MapPath("Files/ElmahSps"), "*.sql"))

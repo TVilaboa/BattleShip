@@ -14,8 +14,8 @@ namespace BattleShip.Data
         DbContext Context { get; set; }
         private readonly Dictionary<Type, object> repositories = new Dictionary<Type, object>();
 
-        public UnitOfWork() : this( ScrapperDataContext.GetInstance) { }
-        public UnitOfWork(ScrapperDataContext context)
+        public UnitOfWork() : this( BattleShipDataContext.GetInstance) { }
+        public UnitOfWork(BattleShipDataContext context)
         {
             this.Context = context;
         }
@@ -66,7 +66,7 @@ namespace BattleShip.Data
         }
         public void InitializeDatabase()
         {
-            ScrapperDataContext.InitializeDatabase();
+            BattleShipDataContext.InitializeDatabase();
         }
         private IRepository<T> GetRepository<T>() where T : class
         {
