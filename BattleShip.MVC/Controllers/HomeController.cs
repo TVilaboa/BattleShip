@@ -28,5 +28,10 @@ namespace BattleShip.MVC.Controllers
         {
             return View();
         }
+        
+        public ActionResult Board()
+        {
+            return View();
+        }
     }
 }
