@@ -6,6 +6,7 @@ using System.Web.Providers.Entities;
 using BattleShip.Domain;
 using BattleShip.Services;
 using Microsoft.AspNet.SignalR;
+using User = BattleShip.Domain.User;
 
 namespace BattleShip.MVC.Hubs
 {
@@ -17,8 +18,50 @@ namespace BattleShip.MVC.Hubs
 
         public void Send(string name, string message)
         {
+            var playRoom =
+               Engine.PlayRooms.FirstOrDefault(
+                   p =>
+                       p.Player1.ConnectionId == Context.ConnectionId || p.Player2.ConnectionId == Context.ConnectionId);
             // Call the addNewMessageToPage method to update clients.
-            Clients.All.addNewMessageToPage(name, message);
+            Clients.Client(playRoom.Player1.ConnectionId).addNewMessageToPage(name, message);
+            Clients.Client(playRoom.Player2.ConnectionId).addNewMessageToPage(name, message);
+            //Clients.All.addNewMessageToPage(name, message);
+        }
+
+        public void SetMap(Map map)
+        {
+            var playRoom =
+              Engine.PlayRooms.FirstOrDefault(
+                  p =>
+                      p.Player1.ConnectionId == Context.ConnectionId || p.Player2.ConnectionId == Context.ConnectionId);
+           var enemy = playRoom.Player1.ConnectionId != Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
+            var user = playRoom.Player1.ConnectionId == Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
+            user.Map = map;
+            user.Stage = User.GameStage.ShipsReady;
+            if (enemy.Stage == User.GameStage.SettingShips)
+            {
+                Clients.Caller.wait();
+            }else if (enemy.Stage == User.GameStage.ShipsReady)
+            {
+                Clients.Client(playRoom.Player1.ConnectionId).startGame();
+                Clients.Client(playRoom.Player2.ConnectionId).startGame();
+                if (new Random().Next(1, 10) > 5)
+                {
+                    user.Stage = User.GameStage.Firing;
+                    enemy.Stage = User.GameStage.WaitingForOponentPlay;
+                    Clients.Caller.beginTurn();
+                    Clients.Client(enemy.ConnectionId).wait();
+                }
+                else
+                {
+                    enemy.Stage = User.GameStage.Firing;
+                    user.Stage = User.GameStage.WaitingForOponentPlay;
+                    Clients.Caller.wait();
+                    Clients.Client(enemy.ConnectionId).beginTurn();
+                }
+               
+            }
+           
         }
 
         public void Hit(Position position)
@@ -27,17 +70,17 @@ namespace BattleShip.MVC.Hubs
                 Engine.PlayRooms.FirstOrDefault(
                     p =>
                         p.Player1.ConnectionId == Context.ConnectionId || p.Player2.ConnectionId == Context.ConnectionId);
-            var hittedPlayerId = playRoom.Player1.ConnectionId != Context.ConnectionId ? playRoom.Player1.Id : playRoom.Player2.Id;
-            var hitterPlayerId = playRoom.Player1.ConnectionId == Context.ConnectionId ? playRoom.Player1.Id : playRoom.Player2.Id;
-            var hittedPlayer = new UserService().Get(hittedPlayerId);
-            var hitterPlayer = new UserService().Get(hitterPlayerId);
+            var hittedPlayer = playRoom.Player1.ConnectionId != Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
+            var hitterPlayer = playRoom.Player1.ConnectionId == Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
             var wasHit = Engine.WasHit(hittedPlayer, position);
             hittedPlayer.Map.Hits.Add(new Hit {HasHit = wasHit, HitPosition = position});
 
             var hasGameEnded = Engine.HasGameEnded(hittedPlayer);
             if (hasGameEnded)
             {
-                hitterPlayer.GameHistories.Add(new GameHistory
+                var dbHittedPlayer = new UserService().Get(hittedPlayer.Id);
+                var dbHitterPlayer = new UserService().Get(hitterPlayer.Id);
+                dbHitterPlayer.GameHistories.Add(new GameHistory
                                              {
                                                  Enemy = hittedPlayer,
                                                  Code = playRoom.Guid,
@@ -45,7 +88,7 @@ namespace BattleShip.MVC.Hubs
                                                  Missed = hittedPlayer.Map.Hits.Count(h => !h.HasHit),
                                                  Status = GameHistory.GameStatus.Win
                                              });
-                hittedPlayer.GameHistories.Add(new GameHistory
+                dbHittedPlayer.GameHistories.Add(new GameHistory
                 {
                     Enemy = hitterPlayer,
                     Code = playRoom.Guid,
@@ -53,9 +96,12 @@ namespace BattleShip.MVC.Hubs
                     Missed = hitterPlayer.Map.Hits.Count(h => !h.HasHit),
                     Status = GameHistory.GameStatus.Loss
                 });
+                dbHitterPlayer.Stage = User.GameStage.NotPlaying;
+                dbHittedPlayer.Stage = User.GameStage.NotPlaying;
+                new UserService().Update(dbHitterPlayer);
+                new UserService().Update(dbHittedPlayer);
             }
-            new UserService().Update(hitterPlayer);
-            new UserService().Update(hittedPlayer);
+           
             Clients.Caller.receiveHitResponse(position, wasHit, hasGameEnded);
         }
 
@@ -66,8 +112,11 @@ namespace BattleShip.MVC.Hubs
                Engine.PlayRooms.FirstOrDefault(
                    p =>
                        p.Player1.ConnectionId == Context.ConnectionId || p.Player2.ConnectionId == Context.ConnectionId);
-            var nextPlayer = playRoom.Player1.ConnectionId != Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
-            Clients.Client(nextPlayer.ConnectionId).beginTurn();
+            var enemy = playRoom.Player1.ConnectionId != Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
+            var user = playRoom.Player1.ConnectionId == Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
+            enemy.Stage = User.GameStage.Firing;
+            user.Stage = User.GameStage.WaitingForOponentPlay;
+            Clients.Client(enemy.ConnectionId).beginTurn();
 
         }
 
@@ -87,6 +136,7 @@ namespace BattleShip.MVC.Hubs
             var user = new UserService().Find(u => u.UserName == name);
             user.ConnectionId = Context.ConnectionId;
             user.Map = new Map();
+            user.Stage = User.GameStage.WaitingForOponent;
             new UserService().AddOrUpdate(user);
             if (!Engine.WaitingList.Any())
             {
@@ -97,6 +147,8 @@ namespace BattleShip.MVC.Hubs
             {
                 var opponent = Engine.WaitingList.First();
                 Engine.WaitingList.Clear();
+                user.Stage = User.GameStage.SettingShips;
+                opponent.Stage= User.GameStage.SettingShips;
                 var playRoom = new PlayRoom
                                {
                                    Guid = Guid.NewGuid().ToString(),

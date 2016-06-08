@@ -57,7 +57,7 @@
                 game.client.createGame = createGame;
                 // Create a function that the hub can call back to display messages.
                 game.client.addNewMessageToPage = addNewMessageToPage;
-
+                game.client.startGame = startGame;
                 game.client.receiveHitResponse = receiveHitResponse;
                 game.client.beginTurn = beginTurn;
 
@@ -82,6 +82,13 @@
                 return encodedValue;
             }
 
+            function setMap(map) {
+                game.server.setMap(map);
+            }
+
+            function startGame() {
+                
+            }
 
             function wait() {
                 $("#waiter").css("visibility", "visible");

@@ -19,8 +19,19 @@ namespace BattleShip.Domain
             // Add custom user claims here
             return userIdentity;
         }
-        
-        public virtual Map Map { get; set; }
+        [NotMapped]
+        public Map Map { get; set; }
         public virtual List<GameHistory> GameHistories { get; set; } = new List<GameHistory>();
+        public virtual GameStage Stage { get; set; }
+
+        public enum GameStage
+        {
+            NotPlaying,
+            WaitingForOponent,
+            SettingShips,
+            ShipsReady,
+            Firing,
+            WaitingForOponentPlay
+        }
     }
 }
