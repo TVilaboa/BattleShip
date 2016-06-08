@@ -30,9 +30,9 @@ namespace BattleShip.Data.DataBase
                 //}
                 //else
                 
-                   var context = ((BattleShipDataContext)HttpContext.Current.Items["BattleShipDataContext"]);
+                   //var context = ((BattleShipDataContext)HttpContext.Current.Items["BattleShipDataContext"]);
                 
-                return context;
+                 return ((BattleShipDataContext)HttpContext.Current.Items["BattleShipDataContext"]);
             }
         }
 

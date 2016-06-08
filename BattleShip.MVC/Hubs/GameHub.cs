@@ -7,6 +7,8 @@ using BattleShip.Domain;
 using BattleShip.Services;
 using Microsoft.AspNet.SignalR;
 using User = BattleShip.Domain.User;
+using System.Threading.Tasks;
+using BattleShip.Data.DataBase;
 
 namespace BattleShip.MVC.Hubs
 {
@@ -191,5 +193,22 @@ namespace BattleShip.MVC.Hubs
                 Clients.Client(playRoom.Player2.ConnectionId).addNewMessageToPage("Server", "Ready");
             }
         }
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            if (BattleShipDataContext.GetInstance != null)
+            {
+                ((BattleShipDataContext)System.Web.HttpContext.Current.Items["BattleShipDataContext"]).Dispose();
+                System.Web.HttpContext.Current.Items["BattleShipDataContext"] = null;
+            }
+            return base.OnDisconnected(stopCalled);
+        }
+
+        public override Task OnConnected()
+        {
+            if (BattleShipDataContext.GetInstance == null)
+                System.Web.HttpContext.Current.Items["BattleShipDataContext"] = new BattleShipDataContext();
+            return base.OnConnected();
+        }
     }
+
 }
