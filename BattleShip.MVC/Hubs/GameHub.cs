@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
-using System.Security.Principal;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Web;
 using BattleShip.Domain;
+using BattleShip.Services;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.Identity;
 
 namespace BattleShip.MVC.Hubs
 {
     public class GameHub : Hub
     {
         public GameEngine Engine = GameEngine.GetInstance;
+        public UserService UserService = new UserService();
+
         public void Send(string name, string message)
         {
             // Call the addNewMessageToPage method to update clients.
@@ -26,14 +25,51 @@ namespace BattleShip.MVC.Hubs
                 Engine.PlayRooms.FirstOrDefault(
                     p =>
                         p.Player1.ConnectionId == Context.ConnectionId || p.Player2.ConnectionId == Context.ConnectionId);
-            var user = playRoom.Player1.ConnectionId != Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
-            var wasHit = Engine.WasHit(user,position);
-            var hasGameEnded = Engine.HasGameEnded(user);
+            var hittedPlayer = playRoom.Player1.ConnectionId != Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
+            var hitterPlayer = playRoom.Player1.ConnectionId == Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
+            var wasHit = Engine.WasHit(hittedPlayer, position);
+            hittedPlayer.Map.Hits.Add(new Hit {HasHit = wasHit, HitPosition = position});
+
+            var hasGameEnded = Engine.HasGameEnded(hittedPlayer);
+            if (hasGameEnded)
+            {
+                hitterPlayer.GameHistories.Add(new GameHistory
+                                             {
+                                                 Enemy = hittedPlayer,
+                                                 Code = playRoom.Guid,
+                                                 Hitted = hittedPlayer.Map.Hits.Count(h => h.HasHit),
+                                                 Missed = hittedPlayer.Map.Hits.Count(h => !h.HasHit),
+                                                 Status = GameHistory.GameStatus.Win
+                                             });
+                hittedPlayer.GameHistories.Add(new GameHistory
+                {
+                    Enemy = hitterPlayer,
+                    Code = playRoom.Guid,
+                    Hitted = hitterPlayer.Map.Hits.Count(h => h.HasHit),
+                    Missed = hitterPlayer.Map.Hits.Count(h => !h.HasHit),
+                    Status = GameHistory.GameStatus.Loss
+                });
+            }
+            UserService.AddOrUpdate(hitterPlayer);
+            UserService.AddOrUpdate(hittedPlayer);
             Clients.Caller.receiveHitResponse(position, wasHit, hasGameEnded);
         }
+
+        public void EndTurn()
+        {
+            Clients.Caller.wait();
+            var playRoom =
+               Engine.PlayRooms.FirstOrDefault(
+                   p =>
+                       p.Player1.ConnectionId == Context.ConnectionId || p.Player2.ConnectionId == Context.ConnectionId);
+            var nextPlayer = playRoom.Player1.ConnectionId != Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
+            Clients.Client(nextPlayer.ConnectionId).beginTurn();
+
+        }
+
         /// <summary>
-        /// Invoked when a new client joins the system
-        /// </summary>        
+        ///     Invoked when a new client joins the system
+        /// </summary>
         public void Joined()
         {
             // 1: Add user to list of connected users
@@ -45,12 +81,12 @@ namespace BattleShip.MVC.Hubs
             // 7: Notify the group the match can start
             // 8: Add the game to the list of games that the Engine must simulate
 
-            var user = new User()
-            {
-                ConnectionId = Context.ConnectionId,
-                Principal = System.Web.HttpContext.Current.User,
-                Map = new Map()
-            };
+            var user = new User
+                       {
+                           ConnectionId = Context.ConnectionId,
+                           Principal = HttpContext.Current.User,
+                           Map = new Map()
+                       };
             //_userRepository.AddUser(user);
             if (!Engine.WaitingList.Any())
             {
@@ -61,15 +97,15 @@ namespace BattleShip.MVC.Hubs
             {
                 var opponent = Engine.WaitingList.First();
                 Engine.WaitingList.Clear();
-                var playRoom = new PlayRoom()
-                {
-                    Guid = Guid.NewGuid().ToString(),
-                    Player1 = opponent,
-                    Player2 = user
-                };
+                var playRoom = new PlayRoom
+                               {
+                                   Guid = Guid.NewGuid().ToString(),
+                                   Player1 = opponent,
+                                   Player2 = user
+                               };
                 //_roomRepository.Add(playRoom);
-                Task t1 = Groups.Add(opponent.ConnectionId, playRoom.Guid);
-                Task t2 = Groups.Add(user.ConnectionId, playRoom.Guid);
+                var t1 = Groups.Add(opponent.ConnectionId, playRoom.Guid);
+                var t2 = Groups.Add(user.ConnectionId, playRoom.Guid);
 
                 t1.Wait();
                 t2.Wait();

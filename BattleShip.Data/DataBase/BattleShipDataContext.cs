@@ -10,14 +10,9 @@ namespace BattleShip.Data.DataBase
 {
     public class BattleShipDataContext : IdentityDbContext<User>
     {
-        private static BattleShipDataContext instance;
-        public static BattleShipDataContext GetInstance
-        {
-            get
-            {
-                return ((BattleShipDataContext)HttpContext.Current.Items["ScrapperDataContext"]);
-            }            
-        }
+        private static BattleShipDataContext _instance;
+        public static BattleShipDataContext GetInstance => ((BattleShipDataContext)HttpContext.Current.Items["BattleShipDataContext"]);
+
         public static BattleShipDataContext Create()
         {
             return new BattleShipDataContext();
@@ -34,16 +29,14 @@ namespace BattleShip.Data.DataBase
         {
             Database.SetInitializer(new BattleShipDataBaseInitializer());
 
-            HttpContext.Current.Items["ScrapperDataContext"] = new BattleShipDataContext();
-            //if (!ScrapperDataContext.GetInstance.Database.Exists())
+            HttpContext.Current.Items["BattleShipDataContext"] = new BattleShipDataContext();
+            //if (!BattleShipDataContext.GetInstance.Database.Exists())
             BattleShipDataContext.GetInstance.Database.Initialize(true);
-            //HttpContext.Current.Items["ScrapperDataContext"] = null;
+            //HttpContext.Current.Items["BattleShipDataContext"] = null;
         }
         
-        public DbSet<Schema> Schemas { get; set; }
-        public DbSet<ScrappedDocument> ScrappedDocuments { get; set; }
-        public DbSet<Path> Paths { get; set; }
-        public DbSet<Domain.Domain> Domains { get; set; }
+        //public DbSet<User> Users { get; set; }
+     
 
         public DbSet<ElmahError> ElmahErrors { get; set; }
 

@@ -12,7 +12,7 @@ namespace BattleShip.Data
     public class UnitOfWork : IUnitOfWork
     {
         DbContext Context { get; set; }
-        private readonly Dictionary<Type, object> repositories = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
 
         public UnitOfWork() : this( BattleShipDataContext.GetInstance) { }
         public UnitOfWork(BattleShipDataContext context)
@@ -20,38 +20,8 @@ namespace BattleShip.Data
             this.Context = context;
         }
 
-        public IRepository<Schema> Schemas
-        {
-            get
-            {
-                return this.GetRepository<Schema>();
-            }
-        }
+        public IRepository<User> Users => this.GetRepository<User>();
 
-        public IRepository<ScrappedDocument> ScrappedDocuments
-        {
-            get
-            {
-                return this.GetRepository<ScrappedDocument>();
-            }
-        }
-
-        public IRepository<Domain.Domain> Domains
-        {
-            get
-            {
-                return this.GetRepository<Domain.Domain>();
-            }
-        }
-
-        public IRepository<Path> Paths
-        {
-            get
-            {
-                return this.GetRepository<Path>();
-            }
-        }
-       
 
         public int SaveChanges()
         {
@@ -70,14 +40,14 @@ namespace BattleShip.Data
         }
         private IRepository<T> GetRepository<T>() where T : class
         {
-            if (!this.repositories.ContainsKey(typeof(T)))
+            if (!this._repositories.ContainsKey(typeof(T)))
             {
                 var type = typeof(GenericRepository<T>);
 
-                this.repositories.Add(typeof(T), Activator.CreateInstance(type, this.Context));
+                this._repositories.Add(typeof(T), Activator.CreateInstance(type, this.Context));
             }
 
-            return (IRepository<T>)this.repositories[typeof(T)];
+            return (IRepository<T>)this._repositories[typeof(T)];
         }
     }
 }

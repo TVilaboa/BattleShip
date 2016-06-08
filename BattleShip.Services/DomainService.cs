@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using BattleShip.Data;
+using BattleShip.Domain;
 
 namespace BattleShip.Services
 {
-    public class DomainService
+    public class UserService
     {
-        public DomainService()
+        public UserService()
         {
             UnitOfWork = new UnitOfWork();
 
@@ -16,29 +17,31 @@ namespace BattleShip.Services
 
         UnitOfWork UnitOfWork { get; set; }
 
-        public IList<Domain.Domain> All()
+        public IQueryable<User> All()
         {
-            return UnitOfWork.Domains.All().ToList();
+            return UnitOfWork.Users.All();
         }
 
-        public IList<Domain.Domain> FindAll(Expression<Func<Domain.Domain, bool>> match)
+        public IQueryable<User> FindAll(Expression<Func<User, bool>> match)
         {
-            return UnitOfWork.Domains.FindAll(match).ToList();
+            return UnitOfWork.Users.FindAll(match);
         }
 
-        public Domain.Domain Get(int id)
+        public User Find(Expression<Func<User, bool>> match)
         {
-            return UnitOfWork.Domains.GetById(id);
+            return UnitOfWork.Users.Find(match);
         }
 
-        public Domain.Domain Add(Domain.Domain domain)
+        public User Get(int id)
         {
-            return UnitOfWork.Domains.Add(domain, true);
+            return UnitOfWork.Users.GetById(id);
         }
 
-        public Domain.Domain GetByCode(string code)
+        public User AddOrUpdate(User user)
         {
-            return UnitOfWork.Domains.Find(s => s.Code == code);
+            return UnitOfWork.Users.AddOrUpdate(user, false,true);
         }
+
+        
     }
 }

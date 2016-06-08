@@ -4,6 +4,7 @@ namespace BattleShip.Domain
 {
     public class Map
     {
+        
         public List<List<Position>> Positions { get; set; }
 
         public List<Ship> Ships { get; set; }
@@ -14,5 +15,7 @@ namespace BattleShip.Domain
         {
             //TODO generate map
         }
+
+        
     }
 }

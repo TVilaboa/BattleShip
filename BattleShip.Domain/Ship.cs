@@ -21,7 +21,6 @@ namespace BattleShip.Domain
         }
 
 
-
-
+       
     }
 }

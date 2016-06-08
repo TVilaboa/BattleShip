@@ -18,7 +18,7 @@
         {
 
             if (BattleShipDataContext.GetInstance == null)
-                System.Web.HttpContext.Current.Items["ScrapperDataContext"] = new BattleShipDataContext();
+                System.Web.HttpContext.Current.Items["BattleShipDataContext"] = new BattleShipDataContext();
         }
         public  void DisposeContext()
         {
@@ -26,7 +26,7 @@
             if (BattleShipDataContext.GetInstance != null)
             {
                 //((PiramideDbContext)System.Web.HttpContext.Current.Items["PiramideDbContext"]).Dispose();
-                System.Web.HttpContext.Current.Items["ScrapperDataContext"] = null;
+                System.Web.HttpContext.Current.Items["BattleShipDataContext"] = null;
             }
         } 
     }

@@ -8,7 +8,7 @@ namespace BattleShip.Data
         //DbContext Context { get;  set; }
 
        
-        IRepository<Schema> Schemas { get; }
+        IRepository<User> Users { get; }
               
        
         

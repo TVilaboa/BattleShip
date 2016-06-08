@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -17,7 +19,8 @@ namespace BattleShip.Domain
             // Add custom user claims here
             return userIdentity;
         }
-
+        [NotMapped]
         public Map Map { get; set; }
+        public List<GameHistory> GameHistories { get; set; }
     }
 }

@@ -2,10 +2,11 @@
 
 namespace BattleShip.Domain
 {
-    public class Hit
+    public class Hit 
     {
         public Position HitPosition { get; set; }
 
-        public Boolean HasHit { get; set; } 
+        public Boolean HasHit { get; set; }
+       
     }
 }
