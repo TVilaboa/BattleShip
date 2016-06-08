@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
-namespace BattleShip.MVC.Models
+namespace BattleShip.Domain
 {
     public class Map
     {
@@ -12,5 +9,10 @@ namespace BattleShip.MVC.Models
         public List<Ship> Ships { get; set; }
 
         public List<Hit> Hits { get; set; }
+
+        public Map()
+        {
+            //TODO generate map
+        }
     }
 }

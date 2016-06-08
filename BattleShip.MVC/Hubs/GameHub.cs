@@ -11,13 +11,25 @@ using Microsoft.AspNet.Identity;
 
 namespace BattleShip.MVC.Hubs
 {
-    public class ChatHub : Hub
+    public class GameHub : Hub
     {
         public GameEngine Engine = GameEngine.GetInstance;
         public void Send(string name, string message)
         {
             // Call the addNewMessageToPage method to update clients.
             Clients.All.addNewMessageToPage(name, message);
+        }
+
+        public void Hit(Position position)
+        {
+            var playRoom =
+                Engine.PlayRooms.FirstOrDefault(
+                    p =>
+                        p.Player1.ConnectionId == Context.ConnectionId || p.Player2.ConnectionId == Context.ConnectionId);
+            var user = playRoom.Player1.ConnectionId != Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
+            var wasHit = Engine.WasHit(user,position);
+            var hasGameEnded = Engine.HasGameEnded(user);
+            Clients.Caller.receiveHitResponse(position, wasHit, hasGameEnded);
         }
         /// <summary>
         /// Invoked when a new client joins the system
@@ -36,7 +48,8 @@ namespace BattleShip.MVC.Hubs
             var user = new User()
             {
                 ConnectionId = Context.ConnectionId,
-                Principal = System.Web.HttpContext.Current.User
+                Principal = System.Web.HttpContext.Current.User,
+                Map = new Map()
             };
             //_userRepository.AddUser(user);
             if (!Engine.WaitingList.Any())
@@ -80,7 +93,9 @@ namespace BattleShip.MVC.Hubs
 
                 Thread.Sleep(3000);
                 //Engine.AddGame(game);
-                Clients.Group(playRoom.Guid).addNewMessageToPage("Server", "Ready");
+                dynamic @group = Clients.Group(playRoom.Guid);
+                @group.createGame();
+                @group.addNewMessageToPage("Server", "Ready");
             }
         }
     }

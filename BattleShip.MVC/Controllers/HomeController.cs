@@ -23,11 +23,7 @@ namespace BattleShip.MVC.Controllers
 
             return View();
         }
-        [Authorize]
-        public ActionResult Game()
-        {
-            return View();
-        }
+        
         
         public ActionResult Board()
         {

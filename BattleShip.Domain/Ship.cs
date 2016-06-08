@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-namespace BattleShip.MVC.Models
+namespace BattleShip.Domain
 {
     public class Ship
     {
         public string Name { get; set; }
         public int Lifes { get; set; }
 
-        public Position initialPosition { get; set; }
+        public Position InitialPosition { get; set; }
 
         public Boolean IsOnXAxis { get; set; }
 
@@ -22,6 +19,8 @@ namespace BattleShip.MVC.Models
         public void ChangeAxis() {
             this.IsOnXAxis = !this.IsOnXAxis;
         }
+
+
 
 
     }

@@ -17,5 +17,7 @@ namespace BattleShip.Domain
             // Add custom user claims here
             return userIdentity;
         }
+
+        public Map Map { get; set; }
     }
 }
