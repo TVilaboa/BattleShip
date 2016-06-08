@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Providers.Entities;
+using BattleShip.Data.DataBase;
 using BattleShip.Domain;
 using BattleShip.Services;
 using Microsoft.AspNet.SignalR;
@@ -190,6 +192,23 @@ namespace BattleShip.MVC.Hubs
                 Clients.Client(playRoom.Player1.ConnectionId).addNewMessageToPage("Server", "Ready");
                 Clients.Client(playRoom.Player2.ConnectionId).addNewMessageToPage("Server", "Ready");
             }
+        }
+      
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            if (BattleShipDataContext.GetInstance != null)
+            {
+                ((BattleShipDataContext)System.Web.HttpContext.Current.Items["BattleShipDataContext"]).Dispose();
+                System.Web.HttpContext.Current.Items["BattleShipDataContext"] = null;
+            }
+            return base.OnDisconnected(stopCalled);
+        }
+
+        public override Task OnConnected()
+        {
+            if (BattleShipDataContext.GetInstance == null)
+                System.Web.HttpContext.Current.Items["BattleShipDataContext"] = new BattleShipDataContext();
+            return base.OnConnected();
         }
     }
 }

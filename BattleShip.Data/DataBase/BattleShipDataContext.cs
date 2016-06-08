@@ -5,6 +5,7 @@ using System.Web;
 using BattleShip.Domain;
 using Elmah.Contrib.EntityFramework;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.SignalR.Hubs;
 
 namespace BattleShip.Data.DataBase
 {
@@ -32,6 +33,8 @@ namespace BattleShip.Data.DataBase
                 
                    var context = ((BattleShipDataContext)HttpContext.Current.Items["BattleShipDataContext"]);
                 
+
+
                 return context;
             }
         }

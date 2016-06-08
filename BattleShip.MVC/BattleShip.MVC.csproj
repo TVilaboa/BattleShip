@@ -239,6 +239,11 @@
     <Content Include="Content\Images\ship.png" />
     <Content Include="Content\Images\spin.gif" />
     <Content Include="favicon.ico" />
+    <Content Include="Files\ElmahSps\ElmahGetError.sql" />
+    <Content Include="Files\ElmahSps\ElmahGetErrorsXML.sql" />
+    <Content Include="Files\ElmahSps\ElmahLogError.sql" />
+    <Content Include="Files\LaNacionSchema.txt" />
+    <Content Include="Files\VademecumSchema.txt" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
