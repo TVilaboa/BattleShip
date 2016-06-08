@@ -18,15 +18,20 @@ namespace BattleShip.Data.DataBase
         {
             get
             {
-                BattleShipDataContext context;
-                if (HttpContext.Current == null)
-                {
-                    context = new BattleShipDataContext();
-                }
-                else
-                {
-                   context = ((BattleShipDataContext)HttpContext.Current.Items["BattleShipDataContext"]);
-                }
+                //BattleShipDataContext context;
+                //if (HttpContext.Current == null)
+                //{
+                //    context = new BattleShipDataContext();
+                //    if (_instance != null)
+                //    {
+                //        _instance.Dispose();
+                //    }
+                //    _instance = context;
+                //}
+                //else
+                
+                   var context = ((BattleShipDataContext)HttpContext.Current.Items["BattleShipDataContext"]);
+                
                 return context;
             }
         }
@@ -65,11 +70,12 @@ namespace BattleShip.Data.DataBase
             
             modelBuilder.Properties<DateTime>().Configure(c => c.HasColumnType("datetime2"));
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
-            
+            modelBuilder.Entity<User>().HasMany<GameHistory>(u => u.GameHistories).WithRequired(g => g.Enemy);
+
             //modelBuilder.Configurations.Add(new UserMap());
-            
-            
-            
+
+
+
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace BattleShip.Domain
 {
-    public class Position
+    public class Position : IEntity
     {
         public int XPosition { get; set; }
         public int YPosition { get; set; }
@@ -28,5 +28,8 @@ namespace BattleShip.Domain
         }
 
         public static IEqualityComparer<Position> YPositionXPositionComparer { get; } = new YPositionXPositionEqualityComparer();
+        public int Id { get; set; }
+        public string Code { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

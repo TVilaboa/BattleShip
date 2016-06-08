@@ -19,8 +19,8 @@ namespace BattleShip.Domain
             // Add custom user claims here
             return userIdentity;
         }
-        [NotMapped]
-        public Map Map { get; set; }
-        public List<GameHistory> GameHistories { get; set; } = new List<GameHistory>();
+        
+        public virtual Map Map { get; set; }
+        public virtual List<GameHistory> GameHistories { get; set; } = new List<GameHistory>();
     }
 }

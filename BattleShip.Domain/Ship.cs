@@ -2,7 +2,7 @@
 
 namespace BattleShip.Domain
 {
-    public class Ship
+    public class Ship : IEntity
     {
         public string Name { get; set; }
         public int Lifes { get; set; }
@@ -21,6 +21,8 @@ namespace BattleShip.Domain
         }
 
 
-       
+        public int Id { get; set; }
+        public string Code { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

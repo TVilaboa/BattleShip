@@ -1,12 +1,15 @@
-﻿namespace BattleShip.Domain
+﻿using System;
+
+namespace BattleShip.Domain
 {
     public class GameHistory : IEntity
     {
         public int Id { get; set; }
         public string Code { get; set; }
         public bool IsDeleted { get; set; }
-        public User Enemy { get; set; }
-        public GameStatus Status { get; set; }
+        public DateTime Ended { get; set; } = DateTime.Now;
+        public virtual User Enemy { get; set; }
+        public virtual GameStatus Status { get; set; }
 
         public enum GameStatus
         {

@@ -25,7 +25,7 @@
 
             if (BattleShipDataContext.GetInstance != null)
             {
-          
+                ((BattleShipDataContext)System.Web.HttpContext.Current.Items["BattleShipDataContext"]).Dispose();
                 System.Web.HttpContext.Current.Items["BattleShipDataContext"] = null;
             }
         } 

@@ -48,11 +48,11 @@
 
             var BOARD_INDEX = 10;
             var SIZE = 40;
-
+            var game;
             $(function () {
 
                 // Reference the auto-generated proxy for the hub.
-                var game = $.connection.gameHub;
+                game = $.connection.gameHub;
                 game.client.wait = wait;
                 game.client.createGame = createGame;
                 // Create a function that the hub can call back to display messages.

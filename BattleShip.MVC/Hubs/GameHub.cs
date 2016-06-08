@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Web;
+using System.Web.Providers.Entities;
 using BattleShip.Domain;
 using BattleShip.Services;
 using Microsoft.AspNet.SignalR;
@@ -11,7 +12,8 @@ namespace BattleShip.MVC.Hubs
     public class GameHub : Hub
     {
         public GameEngine Engine = GameEngine.GetInstance;
-        public UserService UserService = new UserService();
+      
+
 
         public void Send(string name, string message)
         {
@@ -25,8 +27,10 @@ namespace BattleShip.MVC.Hubs
                 Engine.PlayRooms.FirstOrDefault(
                     p =>
                         p.Player1.ConnectionId == Context.ConnectionId || p.Player2.ConnectionId == Context.ConnectionId);
-            var hittedPlayer = playRoom.Player1.ConnectionId != Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
-            var hitterPlayer = playRoom.Player1.ConnectionId == Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
+            var hittedPlayerId = playRoom.Player1.ConnectionId != Context.ConnectionId ? playRoom.Player1.Id : playRoom.Player2.Id;
+            var hitterPlayerId = playRoom.Player1.ConnectionId == Context.ConnectionId ? playRoom.Player1.Id : playRoom.Player2.Id;
+            var hittedPlayer = new UserService().Get(hittedPlayerId);
+            var hitterPlayer = new UserService().Get(hitterPlayerId);
             var wasHit = Engine.WasHit(hittedPlayer, position);
             hittedPlayer.Map.Hits.Add(new Hit {HasHit = wasHit, HitPosition = position});
 
@@ -50,8 +54,8 @@ namespace BattleShip.MVC.Hubs
                     Status = GameHistory.GameStatus.Loss
                 });
             }
-            UserService.Update(hitterPlayer);
-            UserService.Update(hittedPlayer);
+            new UserService().Update(hitterPlayer);
+            new UserService().Update(hittedPlayer);
             Clients.Caller.receiveHitResponse(position, wasHit, hasGameEnded);
         }
 
@@ -80,10 +84,10 @@ namespace BattleShip.MVC.Hubs
             // 6: Setup match (playRoom Id, initial ball direction, player on the left and right etc...)
             // 7: Notify the group the match can start
             var name = Context.User.Identity.Name;
-            var user = UserService.Find(u => u.UserName == name);
+            var user = new UserService().Find(u => u.UserName == name);
             user.ConnectionId = Context.ConnectionId;
             user.Map = new Map();
-            //_userRepository.AddUser(user);
+            new UserService().AddOrUpdate(user);
             if (!Engine.WaitingList.Any())
             {
                 Engine.WaitingList.Add(user);

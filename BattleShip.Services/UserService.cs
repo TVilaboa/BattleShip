@@ -37,6 +37,11 @@ namespace BattleShip.Services
             return UnitOfWork.Users.GetById(id);
         }
 
+        public User Get(string id)
+        {
+            return UnitOfWork.Users.GetById(id);
+        }
+
         public User AddOrUpdate(User user)
         {
             return UnitOfWork.Users.AddOrUpdate(user, false,true);
