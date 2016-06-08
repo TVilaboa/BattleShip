@@ -11,7 +11,7 @@ AS
     SELECT 
         [AllXml]
     FROM 
-         [Scrapper].[dbo].[ElmahErrors]
+         [BattleShip].[dbo].[ElmahErrors]
     WHERE
         [ErrorId] = @ErrorId
     AND

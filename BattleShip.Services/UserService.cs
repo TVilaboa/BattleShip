@@ -42,6 +42,10 @@ namespace BattleShip.Services
             return UnitOfWork.Users.AddOrUpdate(user, false,true);
         }
 
-        
+
+        public User Update(User user)
+        {
+            return UnitOfWork.Users.Update(user, false, true);
+        }
     }
 }

@@ -19,7 +19,7 @@ AS
     SELECT 
         @TotalCount = COUNT(1) 
     FROM 
-        [Scrapper].[dbo].[ElmahErrors]
+        [BattleShip].[dbo].[ElmahErrors]
     WHERE 
         [Application] = @Application
 
@@ -36,7 +36,7 @@ AS
             @FirstTimeUTC = [TimeUtc],
             @FirstSequence = [Sequence]
         FROM 
-             [Scrapper].[dbo].[ElmahErrors]
+             [BattleShip].[dbo].[ElmahErrors]
         WHERE   
             [Application] = @Application
         ORDER BY 
@@ -67,7 +67,7 @@ AS
         statusCode  = [StatusCode], 
         time        = CONVERT(VARCHAR(50), [TimeUtc], 126) + 'Z'
     FROM 
-       [Scrapper].[dbo].[ElmahErrors] error
+       [BattleShip].[dbo].[ElmahErrors] error
     WHERE
         [Application] = @Application
     AND

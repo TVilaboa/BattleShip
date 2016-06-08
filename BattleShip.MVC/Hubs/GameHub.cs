@@ -50,8 +50,8 @@ namespace BattleShip.MVC.Hubs
                     Status = GameHistory.GameStatus.Loss
                 });
             }
-            UserService.AddOrUpdate(hitterPlayer);
-            UserService.AddOrUpdate(hittedPlayer);
+            UserService.Update(hitterPlayer);
+            UserService.Update(hittedPlayer);
             Clients.Caller.receiveHitResponse(position, wasHit, hasGameEnded);
         }
 
@@ -79,14 +79,10 @@ namespace BattleShip.MVC.Hubs
             // 5: Create a group for this room
             // 6: Setup match (playRoom Id, initial ball direction, player on the left and right etc...)
             // 7: Notify the group the match can start
-            // 8: Add the game to the list of games that the Engine must simulate
-
-            var user = new User
-                       {
-                           ConnectionId = Context.ConnectionId,
-                           Principal = HttpContext.Current.User,
-                           Map = new Map()
-                       };
+            var name = Context.User.Identity.Name;
+            var user = UserService.Find(u => u.UserName == name);
+            user.ConnectionId = Context.ConnectionId;
+            user.Map = new Map();
             //_userRepository.AddUser(user);
             if (!Engine.WaitingList.Any())
             {
@@ -103,16 +99,17 @@ namespace BattleShip.MVC.Hubs
                                    Player1 = opponent,
                                    Player2 = user
                                };
+                Engine.PlayRooms.Add(playRoom);
                 //_roomRepository.Add(playRoom);
-                var t1 = Groups.Add(opponent.ConnectionId, playRoom.Guid);
-                var t2 = Groups.Add(user.ConnectionId, playRoom.Guid);
+                //var t1 = Groups.Add(opponent.ConnectionId, playRoom.Guid);
+                //var t2 = Groups.Add(user.ConnectionId, playRoom.Guid);
 
-                t1.Wait();
-                t2.Wait();
+                //t1.Wait();
+                //t2.Wait();
 
-                // Rough solution. We have to be sure the clients have received the group add messages over the wire
-                // TODO: ask maybe on Jabbr or on StackOverflow and think about a better solution
-                Thread.Sleep(3000);
+                //// Rough solution. We have to be sure the clients have received the group add messages over the wire
+                //// TODO: ask maybe on Jabbr or on StackOverflow and think about a better solution
+                //Thread.Sleep(3000);
 
                 //Player player1 = Engine.CreatePlayer(playRoom.Player1, 1, true);
                 //Player player2 = Engine.CreatePlayer(playRoom.Player2, 2, false);
@@ -127,11 +124,15 @@ namespace BattleShip.MVC.Hubs
 
                 //Clients[playRoom.Id].setupMatch(matchOptions);
 
-                Thread.Sleep(3000);
-                //Engine.AddGame(game);
-                dynamic @group = Clients.Group(playRoom.Guid);
-                @group.createGame();
-                @group.addNewMessageToPage("Server", "Ready");
+                //Thread.Sleep(3000);
+                ////Engine.AddGame(game);
+                //dynamic @group = Clients.Group(playRoom.Guid);
+                //@group.createGame();
+                //@group.addNewMessageToPage("Server", "Ready");
+                Clients.Client(playRoom.Player1.ConnectionId).createGame();
+                Clients.Client(playRoom.Player2.ConnectionId).createGame();
+                Clients.Client(playRoom.Player1.ConnectionId).addNewMessageToPage("Server", "Ready");
+                Clients.Client(playRoom.Player2.ConnectionId).addNewMessageToPage("Server", "Ready");
             }
         }
     }

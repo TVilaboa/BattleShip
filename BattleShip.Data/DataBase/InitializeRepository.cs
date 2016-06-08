@@ -25,7 +25,7 @@
 
             if (BattleShipDataContext.GetInstance != null)
             {
-                //((PiramideDbContext)System.Web.HttpContext.Current.Items["PiramideDbContext"]).Dispose();
+          
                 System.Web.HttpContext.Current.Items["BattleShipDataContext"] = null;
             }
         } 

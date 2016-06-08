@@ -18,7 +18,7 @@ AS
 
     INSERT
     INTO
-        [Scrapper].[dbo].[ElmahErrors]
+        [BattleShip].[dbo].[ElmahErrors]
         (
             [ErrorId],
             [Application],

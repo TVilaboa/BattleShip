@@ -21,6 +21,6 @@ namespace BattleShip.Domain
         }
         [NotMapped]
         public Map Map { get; set; }
-        public List<GameHistory> GameHistories { get; set; }
+        public List<GameHistory> GameHistories { get; set; } = new List<GameHistory>();
     }
 }

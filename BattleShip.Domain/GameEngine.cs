@@ -10,9 +10,9 @@ namespace BattleShip.Domain
 
         public static GameEngine GetInstance => Instance ?? (Instance = new GameEngine());
 
-        public List<User> WaitingList = new List<User>();
+        public List<User> WaitingList { get; set; } = new List<User>();
 
-        public List<PlayRoom> PlayRooms { get; set; }
+        public List<PlayRoom> PlayRooms { get; set; } = new List<PlayRoom>();
 
         public bool WasHit(User user, Position position)
         {

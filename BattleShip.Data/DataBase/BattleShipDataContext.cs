@@ -11,7 +11,25 @@ namespace BattleShip.Data.DataBase
     public class BattleShipDataContext : IdentityDbContext<User>
     {
         private static BattleShipDataContext _instance;
-        public static BattleShipDataContext GetInstance => ((BattleShipDataContext)HttpContext.Current.Items["BattleShipDataContext"]);
+        
+
+        public static BattleShipDataContext GetInstance
+
+        {
+            get
+            {
+                BattleShipDataContext context;
+                if (HttpContext.Current == null)
+                {
+                    context = new BattleShipDataContext();
+                }
+                else
+                {
+                   context = ((BattleShipDataContext)HttpContext.Current.Items["BattleShipDataContext"]);
+                }
+                return context;
+            }
+        }
 
         public static BattleShipDataContext Create()
         {
