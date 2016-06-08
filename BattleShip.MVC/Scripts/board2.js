@@ -1,7 +1,7 @@
 ﻿// set grid rows and columns and the size of each square
 var rows = 10;
 var cols = 10;
-var squareSize = 50;
+var squareSize = 40;
 
 // get the container element
 var gameBoardContainer = document.getElementById("gameboard");
@@ -15,7 +15,7 @@ for (i = 0; i < cols; i++) {
 		gameBoardContainer.appendChild(square);
 
     // give each div element a unique id based on its row and column, like "s00"
-		square.id = 's' + j + i;			
+		square.id = 'o' + j + i;			
 		
 		// set each grid square's coordinates: multiples of the current row or column number
 		var topPosition = j * squareSize;
