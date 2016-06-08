@@ -49,6 +49,7 @@
             var BOARD_INDEX = 10;
             var SIZE = 40;
             var game;
+
             $(function () {
 
                 // Reference the auto-generated proxy for the hub.
@@ -57,7 +58,7 @@
                 game.client.createGame = createGame;
                 // Create a function that the hub can call back to display messages.
                 game.client.addNewMessageToPage = addNewMessageToPage;
-                game.client.startGame = startGame;
+
                 game.client.receiveHitResponse = receiveHitResponse;
                 game.client.beginTurn = beginTurn;
 
@@ -82,13 +83,6 @@
                 return encodedValue;
             }
 
-            function setMap(map) {
-                game.server.setMap(map);
-            }
-
-            function startGame() {
-                
-            }
 
             function wait() {
                 $("#waiter").css("visibility", "visible");
@@ -123,6 +117,9 @@
                         // use CSS absolute positioning to place each grid square on the page
                         square.style.top = topPosition + 'px';
                         square.style.left = leftPosition + 'px';
+
+                        square.addEventListener('drop', drop, false);
+                        square.addEventListener('dragover', allowDrop, false);
                     }
                 }
             };
@@ -169,6 +166,7 @@
 
                 }
                 docks.appendChild(container);
+                container.addEventListener('drag', drag, false);
             };
 
             function allowDrop(ev) {

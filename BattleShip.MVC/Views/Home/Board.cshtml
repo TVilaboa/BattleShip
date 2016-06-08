@@ -17,12 +17,147 @@
 
 <body>
 
+    <div id="docks">
+    </div>
+
     <div id="gameboard">
     </div>
 
     <script src="~/Scripts/jquery-2.2.3.min.js"></script>
-    <script src="~/Scripts/board2.js"></script>
+    <!--<script src="~/Scripts/board2.js"></script>-->
+    <script>
 
+            var BOARD_INDEX = 10;
+            var SIZE = 40;
+
+            $(function () {
+
+                buildBoard();
+                loadShips();
+            });
+            // This optional function html-encodes messages for display in the page.
+            function htmlEncode(value) {
+                var encodedValue = $('<div />').text(value).html();
+                return encodedValue;
+            }
+
+
+            function wait() {
+                $("#waiter").css("visibility", "visible");
+            };
+            function createGame() {
+                $("#waiter").css("visibility", "hidden");
+                buildBoard();
+                loadShips();
+            };
+            function addNewMessageToPage(name, message) {
+                // Add the message to the page.
+                $('#discussion').append('<li><strong>' + htmlEncode(name)
+                    + '</strong>: ' + htmlEncode(message) + '</li>');
+            };
+
+            function buildBoard() {
+                var gameBoardContainer = document.getElementById("gameboard");
+                for (i = 0; i < BOARD_INDEX; i++) {
+                    for (j = 0; j < BOARD_INDEX; j++) {
+
+                        // create a new div HTML element for each grid square and make it the right size
+                        var square = document.createElement("div");
+                        gameBoardContainer.appendChild(square);
+
+                        // give each div element a unique id based on its row and column, like "s00"
+                        square.id = 'o' + j + i;
+
+                        // set each grid square's coordinates: multiples of the current row or column number
+                        var topPosition = j * SIZE;
+                        var leftPosition = i * SIZE;
+
+                        // use CSS absolute positioning to place each grid square on the page
+                        square.style.top = topPosition + 'px';
+                        square.style.left = leftPosition + 'px';
+
+                        square.addEventListener('drop', drop, false);
+                        square.addEventListener('dragover', allowDrop, false);
+                    }
+                }
+            };
+
+            function loadShips() {
+
+                var carrier = document.createElement('div');
+                carrier.id = 'carrier';
+                var battleship = document.createElement('div');
+                battleship.id = 'battleship';
+                var destroyer = document.createElement('div');
+                destroyer.id = 'destroyer';
+                var submarine = document.createElement('div');
+                submarine.id = 'submarine';
+                var patrol = document.createElement('div');
+                patrol.id = 'patrol';
+
+                patrol.className = 'ships';
+                submarine.className = 'ships';
+                battleship.className = 'ships';
+                destroyer.className = 'ships';
+                carrier.className = 'ships';
+
+                buildship(2, patrol, 1);
+                buildship(3, submarine, 2);
+                buildship(3, destroyer, 3);
+                buildship(4, battleship, 4);
+                buildship(5, carrier, 5);
+            };
+
+            function buildship(size,container,position) {
+                var docks = document.getElementById('docks');
+                var squareSize = 40;
+
+                var square = document.createElement('div');
+                container.appendChild(square);
+
+                var topPosition = position * SIZE;
+                var leftPosition = SIZE;
+
+                square.style.top = topPosition + 'px';
+                square.style.left = leftPosition + 'px';
+                square.style.width = size * SIZE + 'px';
+
+                docks.appendChild(container);
+                container.addEventListener('drag', drag, false);
+            };
+
+            function allowDrop(ev) {
+                ev.preventDefault();
+            }
+
+            function drag(ev) {
+                ev.dataTransfer.setData("text", ev.target.id);
+            }
+
+            function drop(ev) {
+                ev.preventDefault();
+                var data = ev.dataTransfer.getData("text");
+                ev.target.appendChild(document.getElementById(data));
+            }
+
+            function receiveHitResponse(coordinates, wasHit, hasGameEnded) {
+
+            };
+
+            function sendHitToServer(coordinates) {
+                game.server.hit(coordinates);
+            }
+
+            function beginTurn() {
+
+            }
+
+            function endTurn() {
+                game.server.endTurn();
+            }
+
+
+    </script>
 </body>
 
 </html>
