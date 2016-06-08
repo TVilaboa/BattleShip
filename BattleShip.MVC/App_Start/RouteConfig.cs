@@ -7,6 +7,7 @@ namespace BattleShip.MVC
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
+            routes.IgnoreRoute("elmah.axd");
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(

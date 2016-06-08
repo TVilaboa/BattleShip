@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "La Nación Article",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "selector": "h1[itemprop=headline]",
+      "extract": "text"
+    },
+    "tuft": {
+      "type": "string",
+      "selector": "p.bajada",
+      "extract": "text"
+    },
+    "author": {
+      "type": "string",
+      "selector": "a[itemprop=author]",
+      "extract": "text",
+      "default": "anonymous"
+    },
+    "published": {
+      "type": "date",
+      "selector": "meta[itemprop='datePublished']",
+      "extract": "[content]",
+      "schema" : "yyyy-MM-dd HH:mm:ss"
+    },
+    "content": {
+      "type": "array",
+      "selector": "#cuerpo > p",
+      "extract": "text",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
