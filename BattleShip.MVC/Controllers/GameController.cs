@@ -8,11 +8,7 @@ namespace BattleShip.MVC.Controllers
 {
     public class GameController : Controller
     {
-        // GET: Game
-        public ActionResult Index()
-        {
-            return View();
-        }
+      
         [Authorize]
         public ActionResult Game()
         {

@@ -46,7 +46,7 @@ namespace BattleShip.MVC.Hubs
                 user.Stage = User.GameStage.ShipsReady;
                 if (enemy.Stage == User.GameStage.SettingShips)
                 {
-                    Clients.Caller.wait();
+                    Clients.Caller.wait("Waiting for opponent to set ships...");
                 }
                 else if (enemy.Stage == User.GameStage.ShipsReady)
                 {
@@ -57,13 +57,13 @@ namespace BattleShip.MVC.Hubs
                         user.Stage = User.GameStage.Firing;
                         enemy.Stage = User.GameStage.WaitingForOponentPlay;
                         Clients.Caller.beginTurn();
-                        Clients.Client(enemy.ConnectionId).wait();
+                        Clients.Client(enemy.ConnectionId).wait("Waiting for opponent to fire...");
                     }
                     else
                     {
                         enemy.Stage = User.GameStage.Firing;
                         user.Stage = User.GameStage.WaitingForOponentPlay;
-                        Clients.Caller.wait();
+                        Clients.Caller.wait("Waiting for opponent to fire...");
                         Clients.Client(enemy.ConnectionId).beginTurn();
                     }
 
@@ -96,7 +96,8 @@ namespace BattleShip.MVC.Hubs
                         Code = playRoom.Guid,
                         Hitted = hittedPlayer.Map.Hits.Count(h => h.HasHit),
                         Missed = hittedPlayer.Map.Hits.Count(h => !h.HasHit),
-                        Status = GameHistory.GameStatus.Win
+                        Status = GameHistory.GameStatus.Win,
+                        Duration = (DateTime.Now - playRoom.CreatedDate).TotalMinutes
                     });
                     dbHittedPlayer.GameHistories.Add(new GameHistory
                     {
@@ -104,7 +105,8 @@ namespace BattleShip.MVC.Hubs
                         Code = playRoom.Guid,
                         Hitted = hitterPlayer.Map.Hits.Count(h => h.HasHit),
                         Missed = hitterPlayer.Map.Hits.Count(h => !h.HasHit),
-                        Status = GameHistory.GameStatus.Loss
+                        Status = GameHistory.GameStatus.Loss,
+                        Duration = (DateTime.Now - playRoom.CreatedDate).TotalMinutes
                     });
                     dbHitterPlayer.Stage = User.GameStage.NotPlaying;
                     dbHittedPlayer.Stage = User.GameStage.NotPlaying;
@@ -118,7 +120,7 @@ namespace BattleShip.MVC.Hubs
 
         public void EndTurn()
         {
-            Clients.Caller.wait();
+            Clients.Caller.wait("Waiting for opponent to fire...");
             var playRoom =
                Engine.PlayRooms.FirstOrDefault(
                    p =>

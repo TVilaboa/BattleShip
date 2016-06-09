@@ -9,7 +9,8 @@ namespace BattleShip.MVC.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            return View(new UserService().Find(u => u.Id == User.Identity.GetUserId()).GameHistories);
+            var userId = User.Identity.GetUserId();
+            return View(new UserService().Find(u => u.Id == userId).GameHistories);
         }
 
         public ActionResult About()

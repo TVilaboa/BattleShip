@@ -50,7 +50,7 @@
                         <th>Result</th>
                         <th>Date</th>
                         <th>Efficiency</th>
-
+                        <th>Duration</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,8 +64,11 @@
                             <td data-title="Date">
                                 @item.Ended
                             </td>
-                            <td data-title="Efficiency" >
-                               @(item.Hitted / (item.Hitted + item.Missed) )
+                            <td data-title="Efficiency">
+                                @(item.Hitted/(item.Hitted + item.Missed) )
+                            </td>
+                            <td data-title="Duration">
+                                @item.Duration
                             </td>
 
                         </tr>

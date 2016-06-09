@@ -8,223 +8,252 @@
 
 <h2>Chat</h2>
 <div class="container">
-    <input type="text" id="message" />
-    <input type="button" id="sendmessage" value="Send" />
-    <input type="hidden" id="displayname" />
+<input type="text" id="message"/>
+<input type="button" id="sendmessage" value="Send"/>
+<input type="hidden" id="displayname"/>
 
-    <ul id="discussion"></ul>
-    <div id="waiter" style="visibility: hidden;">
-        <label id="status">Waiting for an opponent...</label>
-        <br>
-        <img src="~/Content/Images/spin.gif" alt="Wait">
+<ul id="discussion"></ul>
+<div id="waiter" style="visibility: hidden;">
+    <label id="status">Waiting for an opponent...</label>
+    <br>
+    <img src="~/Content/Images/spin.gif" alt="Wait">
+</div>
+
+<div id="actions" style="visibility: hidden;">
+    <button class="btn btn-default" onclick="setMap();">Set Ships</button>
+</div>
+
+<div id="docks">
+</div>
+
+<div id="gameboard">
+</div>
+<!--
+<div class="battlefield battlefield__self">
+    <div class="battlefield-gap">
+        <div class="battlefield-table-placeholder"><table class="battlefield-table"><tbody><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">1</div><div class="marker marker__col">A</div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="0" data-x="1"><span class="z"></span>&nbsp;<div class="marker marker__col">B</div><div data-id="R5TIyJf6rnLz" data-length="1" data-position="h" class="ship-box ship-box__h ui-draggable ship-box__draggable" style="width: 2em; height: 2em; padding-right: 0px; padding-bottom: 0px; left: 0px; top: 0px; margin: -2px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="2"><span class="z"></span>&nbsp;<div class="marker marker__col">C</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="3"><span class="z"></span>&nbsp;<div class="marker marker__col">D</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="4"><span class="z"></span>&nbsp;<div class="marker marker__col">E</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="5"><span class="z"></span>&nbsp;<div class="marker marker__col">F</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="6"><span class="z"></span>&nbsp;<div class="marker marker__col">G</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="7"><span class="z"></span>&nbsp;<div class="marker marker__col">H</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="8"><span class="z"></span>&nbsp;<div class="marker marker__col">I</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="9"><span class="z"></span>&nbsp;<div class="marker marker__col">J</div></div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">2</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="1" data-x="6"><span class="z"></span>&nbsp;<div data-id="4bZ3NTS8Jn5M" data-length="2" data-position="v" class="ship-box ship-box__v ui-draggable ship-box__draggable" style="width: 2em; height: 4em; padding-right: 0px; padding-bottom: 1px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="1" data-x="9"><span class="z"></span>&nbsp;<div data-id="znb7M6aSyAQW" data-length="3" data-position="v" class="ship-box ship-box__v ui-draggable ship-box__draggable" style="width: 2em; height: 6em; padding-right: 0px; padding-bottom: 2px;"></div></div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">3</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="2" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="2" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">4</div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="3" data-x="1"><span class="z"></span>&nbsp;<div data-id="kJ8rCgO2Bn5R" data-length="2" data-position="h" class="ship-box ship-box__h ui-draggable ship-box__draggable" style="width: 4em; height: 2em; padding-right: 1px; padding-bottom: 0px;"></div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="3" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="3" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">5</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="4" data-x="4"><span class="z"></span>&nbsp;<div data-id="r4X10TRqULEP" data-length="1" data-position="h" class="ship-box ship-box__h ui-draggable ship-box__draggable" style="width: 2em; height: 2em; padding-right: 0px; padding-bottom: 0px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="4" data-x="6"><span class="z"></span>&nbsp;<div data-id="PBgPIjPgRlCe" data-length="1" data-position="h" class="ship-box ship-box__h ui-draggable ship-box__draggable" style="width: 2em; height: 2em; padding-right: 0px; padding-bottom: 0px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">6</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">7</div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="6" data-x="1"><span class="z"></span>&nbsp;<div data-id="O1pxeABrTDFD" data-length="3" data-position="v" class="ship-box ship-box__v ui-draggable ship-box__draggable" style="width: 2em; height: 6em; padding-right: 0px; padding-bottom: 2px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="6" data-x="8"><span class="z"></span>&nbsp;<div data-id="2KMhDFdB0bIp" data-length="1" data-position="h" class="ship-box ship-box__h ui-draggable ship-box__draggable" style="width: 2em; height: 2em; padding-right: 0px; padding-bottom: 0px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="7" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">8</div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="7" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="7" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="7" data-x="3"><span class="z"></span>&nbsp;<div data-id="2VrkK4d1E3K2" data-length="4" data-position="h" class="ship-box ship-box__h ui-draggable ship-box__draggable" style="width: 8em; height: 2em; padding-right: 3px; padding-bottom: 0px;"></div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="7" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="7" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="7" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="7" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="7" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="7" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">9</div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="8" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="8" data-x="8"><span class="z"></span>&nbsp;<div data-id="ZKOJ5GTsU9o2" data-length="2" data-position="v" class="ship-box ship-box__v ui-draggable ship-box__draggable" style="width: 2em; height: 4em; padding-right: 0px; padding-bottom: 1px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">10</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="9" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="9"><span class="z"></span>&nbsp;</div></td></tr></tbody></table></div>
+        <div class="battlefield-label">Your grid</div>
+
+        <div class="battlefield-stat none"></div>
     </div>
 
-    <div id="docks">
-    </div>
+</div>
+-->
 
-    <div id="gameboard">
-    </div>
-    <!--
-    <div class="battlefield battlefield__self">
-        <div class="battlefield-gap">
-            <div class="battlefield-table-placeholder"><table class="battlefield-table"><tbody><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">1</div><div class="marker marker__col">A</div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="0" data-x="1"><span class="z"></span>&nbsp;<div class="marker marker__col">B</div><div data-id="R5TIyJf6rnLz" data-length="1" data-position="h" class="ship-box ship-box__h ui-draggable ship-box__draggable" style="width: 2em; height: 2em; padding-right: 0px; padding-bottom: 0px; left: 0px; top: 0px; margin: -2px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="2"><span class="z"></span>&nbsp;<div class="marker marker__col">C</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="3"><span class="z"></span>&nbsp;<div class="marker marker__col">D</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="4"><span class="z"></span>&nbsp;<div class="marker marker__col">E</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="5"><span class="z"></span>&nbsp;<div class="marker marker__col">F</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="6"><span class="z"></span>&nbsp;<div class="marker marker__col">G</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="7"><span class="z"></span>&nbsp;<div class="marker marker__col">H</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="8"><span class="z"></span>&nbsp;<div class="marker marker__col">I</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="0" data-x="9"><span class="z"></span>&nbsp;<div class="marker marker__col">J</div></div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">2</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="1" data-x="6"><span class="z"></span>&nbsp;<div data-id="4bZ3NTS8Jn5M" data-length="2" data-position="v" class="ship-box ship-box__v ui-draggable ship-box__draggable" style="width: 2em; height: 4em; padding-right: 0px; padding-bottom: 1px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="1" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="1" data-x="9"><span class="z"></span>&nbsp;<div data-id="znb7M6aSyAQW" data-length="3" data-position="v" class="ship-box ship-box__v ui-draggable ship-box__draggable" style="width: 2em; height: 6em; padding-right: 0px; padding-bottom: 2px;"></div></div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">3</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="2" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="2" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="2" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">4</div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="3" data-x="1"><span class="z"></span>&nbsp;<div data-id="kJ8rCgO2Bn5R" data-length="2" data-position="h" class="ship-box ship-box__h ui-draggable ship-box__draggable" style="width: 4em; height: 2em; padding-right: 1px; padding-bottom: 0px;"></div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="3" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="3" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="3" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">5</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="4" data-x="4"><span class="z"></span>&nbsp;<div data-id="r4X10TRqULEP" data-length="1" data-position="h" class="ship-box ship-box__h ui-draggable ship-box__draggable" style="width: 2em; height: 2em; padding-right: 0px; padding-bottom: 0px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="4" data-x="6"><span class="z"></span>&nbsp;<div data-id="PBgPIjPgRlCe" data-length="1" data-position="h" class="ship-box ship-box__h ui-draggable ship-box__draggable" style="width: 2em; height: 2em; padding-right: 0px; padding-bottom: 0px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="4" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">6</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="5" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">7</div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="6" data-x="1"><span class="z"></span>&nbsp;<div data-id="O1pxeABrTDFD" data-length="3" data-position="v" class="ship-box ship-box__v ui-draggable ship-box__draggable" style="width: 2em; height: 6em; padding-right: 0px; padding-bottom: 2px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="6" data-x="8"><span class="z"></span>&nbsp;<div data-id="2KMhDFdB0bIp" data-length="1" data-position="h" class="ship-box ship-box__h ui-draggable ship-box__draggable" style="width: 2em; height: 2em; padding-right: 0px; padding-bottom: 0px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="6" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="7" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">8</div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="7" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="7" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="7" data-x="3"><span class="z"></span>&nbsp;<div data-id="2VrkK4d1E3K2" data-length="4" data-position="h" class="ship-box ship-box__h ui-draggable ship-box__draggable" style="width: 8em; height: 2em; padding-right: 3px; padding-bottom: 0px;"></div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="7" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="7" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="7" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="7" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="7" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="7" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">9</div></div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="8" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="8" data-x="8"><span class="z"></span>&nbsp;<div data-id="ZKOJ5GTsU9o2" data-length="2" data-position="v" class="ship-box ship-box__v ui-draggable ship-box__draggable" style="width: 2em; height: 4em; padding-right: 0px; padding-bottom: 1px;"></div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="8" data-x="9"><span class="z"></span>&nbsp;</div></td></tr><tr class="battlefield-row"><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="0"><span class="z"></span>&nbsp;<div class="marker marker__row">10</div></div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="1"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="2"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="3"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="4"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="5"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="6"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="7"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__busy"><div class="battlefield-cell-content" data-y="9" data-x="8"><span class="z"></span>&nbsp;</div></td><td class="battlefield-cell battlefield-cell__empty"><div class="battlefield-cell-content" data-y="9" data-x="9"><span class="z"></span>&nbsp;</div></td></tr></tbody></table></div>
-            <div class="battlefield-label">Your grid</div>
+@section scripts {
+    <!--Script references. -->
+    <!--The jQuery library is required and is referenced by default in _Layout.cshtml. -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <!--Reference the autogenerated SignalR hub script. -->
+    <script src="~/signalr/hubs"></script>
+    <!--SignalR script to update the chat page and send messages.-->
+    <script>
 
-            <div class="battlefield-stat none"></div>
-        </div>
+        var BOARD_INDEX = 10;
+        var SIZE = 40;
+        var game;
+        var ships = [];
 
-    </div>
-    -->
 
-    @section scripts {
-        <!--Script references. -->
-        <!--The jQuery library is required and is referenced by default in _Layout.cshtml. -->
-        <!--Reference the SignalR library. -->
-        <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
-        <!--Reference the autogenerated SignalR hub script. -->
-        <script src="~/signalr/hubs"></script>
-        <!--SignalR script to update the chat page and send messages.-->
-        <script>
+        function Ship(lifes) {
+            this.lifes = lifes;
+            this.xPosition = 0;
+            this.yPosition = 0;
+            this.isOnXAxis = true;
+        }
 
-            var BOARD_INDEX = 10;
-            var SIZE = 40;
-            var game;
-            var ships = [];
-            for (var i = 1; i < 7; i++) {
-                ships.push(Ship(i));
-            }
+        function setMap() {
+            game.server.setMap(ships);
 
-            function Ship(lifes) {
-                this.lifes = lifes;
-                this.xPosition = 0;
-                this.yPosition = 0;
-                this.isOnXAxis = true;
-            }
+        }
 
-            function setMap() {
-                game.server.setMap(ships);
-            }
+        function startGame() {
 
-            function startGame() {
+        }
 
-            }
-            $(function () {
+        $(function() {
 
-                // Reference the auto-generated proxy for the hub.
-                game = $.connection.gameHub;
-                game.client.wait = wait;
-                game.client.createGame = createGame;
-                // Create a function that the hub can call back to display messages.
-                game.client.addNewMessageToPage = addNewMessageToPage;
+            // Reference the auto-generated proxy for the hub.
+            game = $.connection.gameHub;
+            game.client.wait = wait;
+            game.client.createGame = createGame;
+            // Create a function that the hub can call back to display messages.
+            game.client.addNewMessageToPage = addNewMessageToPage;
 
-                game.client.receiveHitResponse = receiveHitResponse;
-                game.client.beginTurn = beginTurn;
+            game.client.receiveHitResponse = receiveHitResponse;
+            game.client.beginTurn = beginTurn;
 
-                // Get the user name and store it to prepend to messages.
-                $('#displayname').val('@User.Identity.GetUserName()');
-                // Set initial focus to message input box.
-                $('#message').focus();
-                // Start the connection.
-                $.connection.hub.start().done(function () {
-                    $('#sendmessage').click(function () {
-                        // Call the Send method on the hub.
-                        game.server.send($('#displayname').val(), $('#message').val());
-                        // Clear text box and reset focus for next comment.
-                        $('#message').val('').focus();
-                    });
-                    game.server.joined();
+            // Get the user name and store it to prepend to messages.
+            $('#displayname').val('@User.Identity.GetUserName()');
+            // Set initial focus to message input box.
+            $('#message').focus();
+            // Start the connection.
+            $.connection.hub.start().done(function() {
+                $('#sendmessage').click(function() {
+                    // Call the Send method on the hub.
+                    game.server.send($('#displayname').val(), $('#message').val());
+                    // Clear text box and reset focus for next comment.
+                    $('#message').val('').focus();
                 });
-                $.connection.hub.disconnected(function () {
-                    setTimeout(function () {
-                        $.connection.hub.start();
-                    }, 500); 
-                });
+                game.server.joined();
             });
-            // This optional function html-encodes messages for display in the page.
-            function htmlEncode(value) {
-                var encodedValue = $('<div />').text(value).html();
-                return encodedValue;
+            $.connection.hub.disconnected(function() {
+                setTimeout(function() {
+                    $.connection.hub.start();
+                }, 500);
+            });
+        });
+
+// This optional function html-encodes messages for display in the page.
+        function htmlEncode(value) {
+            var encodedValue = $('<div />').text(value).html();
+            return encodedValue;
+        }
+
+
+        function wait(status) {
+            $("#waiter").css("visibility", "visible");
+            if (status == null) {
+                status = "Waiting for an opponent ...";
             }
+            $("#status").text(status);
+        };
 
+        function createGame() {
+            $("#waiter").css("visibility", "hidden");
+            $("#actions").css("visibility", "visible");
 
-            function wait() {
-                $("#waiter").css("visibility", "visible");
-            };
-            function createGame() {
-                $("#waiter").css("visibility", "hidden");
-                buildBoard();
-                loadShips();
-            };
-            function addNewMessageToPage(name, message) {
-                // Add the message to the page.
-                $('#discussion').append('<li><strong>' + htmlEncode(name)
-                    + '</strong>: ' + htmlEncode(message) + '</li>');
-            };
+            buildBoard();
+            loadShips();
+        };
 
-            function buildBoard() {
-                var gameBoardContainer = document.getElementById("gameboard");
-                for (i = 0; i < BOARD_INDEX; i++) {
-                    for (j = 0; j < BOARD_INDEX; j++) {
+        function addNewMessageToPage(name, message) {
+            // Add the message to the page.
+            $('#discussion').append('<li><strong>' + htmlEncode(name)
+                + '</strong>: ' + htmlEncode(message) + '</li>');
+        };
 
-                        // create a new div HTML element for each grid square and make it the right size
-                        var square = document.createElement("div");
-                        gameBoardContainer.appendChild(square);
+        function buildBoard() {
+            var gameBoardContainer = document.getElementById("gameboard");
+            for (i = 0; i < BOARD_INDEX; i++) {
+                for (j = 0; j < BOARD_INDEX; j++) {
 
-                        // give each div element a unique id based on its row and column, like "s00"
-                        square.id = 'o' + j + i;
+                    // create a new div HTML element for each grid square and make it the right size
+                    var square = document.createElement("div");
+                    gameBoardContainer.appendChild(square);
 
-                        // set each grid square's coordinates: multiples of the current row or column number
-                        var topPosition = j * SIZE;
-                        var leftPosition = i * SIZE;
+                    // give each div element a unique id based on its row and column, like "s00"
+                    square.id = 'o' + j + i;
 
-                        // use CSS absolute positioning to place each grid square on the page
-                        square.style.top = topPosition + 'px';
-                        square.style.left = leftPosition + 'px';
-
-                        square.addEventListener('drop', drop, false);
-                        square.addEventListener('dragover', allowDrop, false);
-                    }
-                }
-            };
-
-            function loadShips() {
-
-                var carrier = document.createElement('div');
-                carrier.id = 'carrier';
-                var battleship = document.createElement('div');
-                battleship.id = 'battleship';
-                var destroyer = document.createElement('div');
-                destroyer.id = 'destroyer';
-                var submarine = document.createElement('div');
-                submarine.id = 'submarine';
-                var patrol = document.createElement('div');
-                patrol.id = 'patrol';
-
-                patrol.className = 'ships';
-                submarine.className = 'ships';
-                battleship.className = 'ships';
-                destroyer.className = 'ships';
-                carrier.className = 'ships';
-
-                buildship(2, patrol, 1);
-                buildship(3, submarine, 2);
-                buildship(3, destroyer, 3);
-                buildship(4, battleship, 4);
-                buildship(5, carrier, 5);
-            };
-
-            function buildship(size,container,position) {
-                var docks = document.getElementById('docks');
-                var squareSize = 40;
-
-                for(i = 1; i <= size; i++){
-                    var square = document.createElement('div');
-                    container.appendChild(square);
-
-                    var topPosition = position * SIZE;
+                    // set each grid square's coordinates: multiples of the current row or column number
+                    var topPosition = j * SIZE;
                     var leftPosition = i * SIZE;
 
+                    // use CSS absolute positioning to place each grid square on the page
                     square.style.top = topPosition + 'px';
                     square.style.left = leftPosition + 'px';
 
+                    square.addEventListener('drop', drop, false);
+                    square.addEventListener('dragover', allowDrop, false);
                 }
-                docks.appendChild(container);
-                container.addEventListener('drag', drag, false);
-            };
-
-            function allowDrop(ev) {
-                ev.preventDefault();
             }
+        };
 
-            function drag(ev) {
-                ev.dataTransfer.setData("text", ev.target.id);
+        function loadShips() {
+
+            var carrier = document.createElement('div');
+            carrier.id = 'carrier';
+            var battleship = document.createElement('div');
+            battleship.id = 'battleship';
+            var destroyer = document.createElement('div');
+            destroyer.id = 'destroyer';
+            var submarine = document.createElement('div');
+            submarine.id = 'submarine';
+            var patrol = document.createElement('div');
+            patrol.id = 'patrol';
+
+            patrol.className = 'ships';
+            submarine.className = 'ships';
+            battleship.className = 'ships';
+            destroyer.className = 'ships';
+            carrier.className = 'ships';
+
+            buildship(2, patrol, 1);
+            buildship(3, submarine, 2);
+            buildship(3, destroyer, 3);
+            buildship(4, battleship, 4);
+            buildship(5, carrier, 5);
+        };
+
+        function buildship(size, container, position) {
+            var docks = document.getElementById('docks');
+            var squareSize = 40;
+            ships.push(Ship(size));
+            for (i = 1; i <= size; i++) {
+                var square = document.createElement('div');
+                container.appendChild(square);
+
+                var topPosition = position * SIZE;
+                var leftPosition = i * SIZE;
+
+                square.style.top = topPosition + 'px';
+                square.style.left = leftPosition + 'px';
+
             }
+            docks.appendChild(container);
+            container.addEventListener('drag', drag, false);
+        };
 
-            function drop(ev) {
-                ev.preventDefault();
-                var data = ev.dataTransfer.getData("text");
-                ev.target.appendChild(document.getElementById(data));
-            }
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
 
-            function receiveHitResponse(coordinates, wasHit, hasGameEnded) {
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
 
-            };
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            ev.target.appendChild(document.getElementById(data));
+        }
 
-            function sendHitToServer(coordinates) {
-                game.server.hit(coordinates);
-            }
+        function receiveHitResponse(coordinates, wasHit, hasGameEnded) {
+            //draw();
+            endTurn();
+        };
 
-            function beginTurn() {
+        function sendHitToServer(coordinates) {
+            game.server.hit(coordinates);
+        }
 
-            }
+        function beginTurn() {
+            $("#waiter").css("visibility", "hidden");
+            $('#turnModal').modal('show');
+        }
 
-            function endTurn() {
-                game.server.endTurn();
-            }
+        function endTurn() {
+            game.server.endTurn();
+        }
 
 
+    </script>
+}
+</div>
+    
+<div class="modal fade" id="turnModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="top: 100px;">
+            <div class="modal-header">
+                <h4 class="modal-title" id="deleteLabel">Notification</h4>
+            </div>
+            <div class="modal-body">
 
 
-        </script>
-    }
+                <p >Its your turn now!!</p>
+            </div>
+           
+        </div>
+    </div>
 </div>
