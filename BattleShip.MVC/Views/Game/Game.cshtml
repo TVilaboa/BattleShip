@@ -76,6 +76,12 @@
                     });
                     game.server.joined();
                 });
+
+                $.connection.hub.disconnected(function () {
+                    setTimeout(function () {
+                        $.connection.hub.start();
+                    }, 1); // Re-start connection after 5 seconds
+                });
             });
             // This optional function html-encodes messages for display in the page.
             function htmlEncode(value) {
