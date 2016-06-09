@@ -30,8 +30,13 @@ namespace BattleShip.Data.DataBase
                 //    _instance = context;
                 //}
                 //else
-                
-                   var context = ((BattleShipDataContext)HttpContext.Current.Items["BattleShipDataContext"]);
+
+                var httpContext = HttpContext.Current;
+                if (httpContext == null)
+                {
+                    return null;
+                }
+                var context = ((BattleShipDataContext)httpContext.Items["BattleShipDataContext"]);
                 
 
 

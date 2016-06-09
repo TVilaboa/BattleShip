@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Microsoft.Owin.Security.DataHandler.Encoder
+@model  List<BattleShip.Domain.GameHistory>
+@{
     ViewBag.Title = "Home Page";
 }
 
@@ -9,7 +11,11 @@
 </div>
 
 <div class="row">
-    <button class="btn btn-default">Play</button>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+        @Html.ActionLink("Play", "Game", "Game", new {}, new {@class = "btn btn-default center-block"})
+    </div>
+
     @*<div class="col-md-4">
         <h2>Getting started</h2>
         <p>
@@ -29,4 +35,51 @@
         <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
         <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
     </div>*@
+</div>
+
+<link rel="stylesheet" href="~/Content/NoMoreTables.css" />
+
+
+<div class="container">
+    <div class="row">
+        <div class="noTable">
+            <table class="col-md-12 table-bordered table-striped table-condensed cf">
+                <thead class="cf">
+                    <tr>
+                        <th>Enemy</th>
+                        <th>Result</th>
+                        <th>Date</th>
+                        <th>Efficiency</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td data-title="Enemy">@item.Enemy.UserName</td>
+                            <td data-title="Result">
+                               @item.Status
+                            </td>
+                            <td data-title="Date">
+                                @item.Ended
+                            </td>
+                            <td data-title="Efficiency">
+                                @(item.Hitted/(item.Hitted + item.Missed) )
+                            </td>
+                            <td data-title="Duration">
+                                @item.Duration
+                            </td>
+
+                        </tr>
+
+
+                    }
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>

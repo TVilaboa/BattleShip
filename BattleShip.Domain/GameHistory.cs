@@ -20,5 +20,6 @@ namespace BattleShip.Domain
 
         public int Hitted { get; set; }
         public int Missed { get; set; }
+        public double Duration { get; set; }
     }
 }
