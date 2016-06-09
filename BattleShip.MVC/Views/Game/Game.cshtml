@@ -49,7 +49,25 @@
             var BOARD_INDEX = 10;
             var SIZE = 40;
             var game;
+            var ships = [];
+            for (var i = 1; i < 7; i++) {
+                ships.push(Ship(i));
+            }
 
+            function Ship(lifes) {
+                this.lifes = lifes;
+                this.xPosition = 0;
+                this.yPosition = 0;
+                this.isOnXAxis = true;
+            }
+
+            function setMap() {
+                game.server.setMap(ships);
+            }
+
+            function startGame() {
+
+            }
             $(function () {
 
                 // Reference the auto-generated proxy for the hub.
@@ -75,6 +93,11 @@
                         $('#message').val('').focus();
                     });
                     game.server.joined();
+                });
+                $.connection.hub.disconnected(function () {
+                    setTimeout(function () {
+                        $.connection.hub.start();
+                    }, 500); 
                 });
             });
             // This optional function html-encodes messages for display in the page.
@@ -198,6 +221,8 @@
             function endTurn() {
                 game.server.endTurn();
             }
+
+
 
 
         </script>

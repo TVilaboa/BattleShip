@@ -1,4 +1,6 @@
 ﻿using System.Web.Mvc;
+using BattleShip.Services;
+using Microsoft.AspNet.Identity;
 
 namespace BattleShip.MVC.Controllers
 {
@@ -7,7 +9,7 @@ namespace BattleShip.MVC.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            return View();
+            return View(new UserService().Find(u => u.Id == User.Identity.GetUserId()).GameHistories);
         }
 
         public ActionResult About()
