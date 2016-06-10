@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNet.Identity
 @{
-    ViewBag.Title = "Chat";
+    ViewBag.Title = "BattleShip powered by D.P.O.I.";
 }
 
 <link rel="stylesheet" href="~/Content/BattleShip.css" />
@@ -20,7 +20,7 @@
 </div>
 
 <div id="actions" style="visibility: hidden;">
-    <button class="btn btn-default" onclick="setMap();">Set Ships</button>
+    <button id="btnSetShips"class="btn btn-default" onclick="setMap();">Set Ships</button>
 </div>
 
 <div id="docks">
@@ -54,18 +54,31 @@
         var SIZE = 40;
         var game;
         var ships = [];
+        var GAMEBOARD = document.getElementById('gameboard');
+        var DOCKS = document.getElementById('docks');
 
-
-        function Ship(lifes) {
+        function Ship(lifes,name) {
             this.lifes = lifes;
+            this.position = new Position();
+            this.isOnXAxis = true;
+            this.name = name;
+            this.hasBeenSet = false;
+        }
+
+        function Position() {
             this.xPosition = 0;
             this.yPosition = 0;
-            this.isOnXAxis = true;
         }
 
         function setMap() {
-            game.server.setMap(ships);
-
+            if (ships.filter(s => !s.hasBeenSet)[0] == undefined) {
+                game.server.setMap(ships);
+                $("#btnSetShips").hide();
+            } else {
+                $('#statusModal').text("You must set all ships...");
+                $('#notificationModal').modal('show');
+            }
+           
         }
 
         function startGame() {
@@ -83,7 +96,7 @@
 
             game.client.receiveHitResponse = receiveHitResponse;
             game.client.beginTurn = beginTurn;
-
+            game.client.startGame = startGame;
             // Get the user name and store it to prepend to messages.
             $('#displayname').val('@User.Identity.GetUserName()');
             // Set initial focus to message input box.
@@ -110,7 +123,9 @@
             var encodedValue = $('<div />').text(value).html();
             return encodedValue;
         }
-
+        function genCellId(j, i) {
+            return '' + j + '-' + i;
+        };
 
         function wait(status) {
             $("#waiter").css("visibility", "visible");
@@ -135,16 +150,15 @@
         };
 
         function buildBoard() {
-            var gameBoardContainer = document.getElementById("gameboard");
             for (i = 0; i < BOARD_INDEX; i++) {
                 for (j = 0; j < BOARD_INDEX; j++) {
 
                     // create a new div HTML element for each grid square and make it the right size
                     var square = document.createElement("div");
-                    gameBoardContainer.appendChild(square);
+                    GAMEBOARD.appendChild(square);
 
                     // give each div element a unique id based on its row and column, like "s00"
-                    square.id = 'o' + j + i;
+                    square.id = genCellId(j, i);
 
                     // set each grid square's coordinates: multiples of the current row or column number
                     var topPosition = j * SIZE;
@@ -154,8 +168,10 @@
                     square.style.top = topPosition + 'px';
                     square.style.left = leftPosition + 'px';
 
+                    square.addEventListener('dragover', drag_over, false);
                     square.addEventListener('drop', drop, false);
-                    square.addEventListener('dragover', allowDrop, false);
+
+                    document.body.addEventListener('dragover', drag_over, false);
                 }
             }
         };
@@ -179,45 +195,135 @@
             destroyer.className = 'ships';
             carrier.className = 'ships';
 
-            buildship(2, patrol, 1);
-            buildship(3, submarine, 2);
+            buildship(1, patrol, 1);
+            buildship(2, submarine, 2);
             buildship(3, destroyer, 3);
             buildship(4, battleship, 4);
             buildship(5, carrier, 5);
         };
-
+      
         function buildship(size, container, position) {
-            var docks = document.getElementById('docks');
-            var squareSize = 40;
-            ships.push(Ship(size));
-            for (i = 1; i <= size; i++) {
-                var square = document.createElement('div');
-                container.appendChild(square);
 
-                var topPosition = position * SIZE;
-                var leftPosition = i * SIZE;
+            var topPosition = position * SIZE;
+            var leftPosition = SIZE;
+            ships.push(new Ship(size,container.id));
+            container.style.top = topPosition + 'px';
+            container.style.left = leftPosition + 'px';
+            container.style.width = size * SIZE + 'px';
 
-                square.style.top = topPosition + 'px';
-                square.style.left = leftPosition + 'px';
+            container.draggable = true;
 
-            }
-            docks.appendChild(container);
-            container.addEventListener('drag', drag, false);
+            DOCKS.appendChild(container);
+            container.addEventListener('dragstart', drag_start, false);
+            container.addEventListener('click', rotate);
+
         };
 
-        function allowDrop(ev) {
-            ev.preventDefault();
-        }
+        function rotate(event) {
+            event.preventDefault();
 
-        function drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.id);
-        }
+            var ship = document.getElementById(event.target.id);
+            var shipInArray = ships.filter(s => s.name === event.target.id)[0];
+            shipInArray.isOnXAxis = !shipInArray.isOnXAxis;
+            var height = ship.style.height;
+            var width = ship.style.width;
 
-        function drop(ev) {
-            ev.preventDefault();
-            var data = ev.dataTransfer.getData("text");
-            ev.target.appendChild(document.getElementById(data));
-        }
+            ship.style.height = width;
+            ship.style.width = height;
+
+        };
+
+        function drag_start(event) {
+            var style = window.getComputedStyle(event.target, null);
+            event.dataTransfer.setData("text/plain", event.target.id);
+        };
+
+        function drag_over(event) {
+            event.preventDefault();
+            return false;
+        };
+
+        function drop(event) {
+            var ship = document.getElementById(event.dataTransfer.getData("text/plain"));
+            var cell = document.getElementById(event.target.id);
+            var shipOnArray = ships.filter(s => s.name === ship.id)[0];
+            shipOnArray.position.xPosition = cell.id.split('-')[1];
+            shipOnArray.position.yPosition = cell.id.split('-')[0];
+            if (validateDrop(ship, cell)) {
+                ship.style.top = cell.style.top;
+                ship.style.left = cell.style.left;
+                ship.style.background = 'orange';
+
+                var shipHeight = getIntHeight(ship);
+                var shipWidth = getIntWidth(ship);
+                var direction;
+                if (ship.style.width > ship.style.height) {
+                    var cellsRemaining = (shipWidth / SIZE) - 1;
+                    var origin = cell.id.split('-');
+                    for (i = 1; i <= cellsRemaining; i++) {
+                        GAMEBOARD.removeChild(document.getElementById(origin[0] + '-' + (parseInt(origin[1]) + i)));
+                    }
+                }
+                else {
+                    var cellsRemaining = (shipHeight / SIZE) - 1;
+                    var origin = cell.id.split('-');
+                    for (i = 1; i <= cellsRemaining; i++) {
+                        //GAMEBOARD.removeChild(document.getElementById((parseInt(origin[0]) + i) + '-' + origin[1]));
+                        document.getElementById((parseInt(origin[0]) + i) + '-' + origin[1]).style += "display:none;";
+                    }
+                }
+
+
+
+
+
+                //GAMEBOARD.replaceChild(ship, cell);
+                cell.appendChild(ship);
+                //GAMEBOARD.removeChild(cell);
+                cell.style += "Display:none;";
+                shipOnArray.hasBeenSet = true;
+            }
+
+            //var dm = document.getElementById('dragme');
+            //dm.style.left = (event.clientX + parseInt(offset[0], 10)) + 'px';
+            //dm.style.top = (event.clientY + parseInt(offset[1], 10)) + 'px';
+
+            event.preventDefault();
+            return false;
+        };
+
+        function getIntHeight(ship) {
+            return parseInt(ship.style.height.replace('px', ''));
+        };
+
+        function getIntWidth(ship) {
+            return parseInt(ship.style.width.replace('px', ''));
+        };
+
+        function validateDrop(ship, cell) {
+            var result;
+
+            var height = getIntHeight(ship);
+            var width = getIntWidth(ship);
+
+            var exists;
+            if (height > width) {
+                var size = (height / SIZE) - 1;
+                var validString = cell.id.split('-')[1];
+                exists = size + '-' + validString;
+            }
+            else {
+                var size = (width / SIZE) - 1;
+                var validString = cell.id.split('-')[0];
+                exists = validString + '-' + size;
+            }
+
+            if (document.getElementById(exists))
+                result = true;
+            else result = false;
+
+            return result;
+        };
 
         function receiveHitResponse(coordinates, wasHit, hasGameEnded) {
             //draw();
@@ -230,7 +336,8 @@
 
         function beginTurn() {
             $("#waiter").css("visibility", "hidden");
-            $('#turnModal').modal('show');
+            $("#statusModal").text("Its your turn now!!");
+            $('#notificationModal').modal('show');
         }
 
         function endTurn() {
@@ -242,7 +349,7 @@
 }
 </div>
     
-<div class="modal fade" id="turnModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content" style="top: 100px;">
             <div class="modal-header">
@@ -251,7 +358,7 @@
             <div class="modal-body">
 
 
-                <p >Its your turn now!!</p>
+                <p id="statusModal">Its your turn now!!</p>
             </div>
            
         </div>

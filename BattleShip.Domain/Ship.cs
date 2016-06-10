@@ -7,7 +7,7 @@ namespace BattleShip.Domain
         public string Name { get; set; }
         public int Lifes { get; set; }
 
-        public Position InitialPosition { get; set; }
+        public Position Position { get; set; }
 
         public Boolean IsOnXAxis { get; set; }
 

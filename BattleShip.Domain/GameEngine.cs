@@ -16,7 +16,7 @@ namespace BattleShip.Domain
 
         public bool WasHit(User user, Position position)
         {
-            return  user.Map.Ships.Any(s => s.InitialPosition == position);//TODO revisar por el resto de las coordinadas del barco
+            return  user.Map.Ships.Any(s => s.Position == position);//TODO revisar por el resto de las coordinadas del barco
         }
 
         public bool HasGameEnded(User user)
