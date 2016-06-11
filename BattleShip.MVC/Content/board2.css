@@ -16,6 +16,28 @@
 
 
 
+.left-cell-title{
+    text-align: left;
+    margin-top: 10px;
+    margin-left: -5px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 15px;
+}
+
+.center-cell-title{
+    text-align: center;
+    margin-top: -10px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 15px;
+}
+
+div h1 span{
+    background-color: white;
+}
+
+
 h1 {
     font-size: 3em;
     font-family:'Helvetica', 'Arial', 'Sans-Serif';

@@ -1,4 +1,22 @@
 ﻿@using Microsoft.AspNet.Identity
+
+@helper AddCellTiltle()
+{
+    <text>
+        if(i== 0 && j == 0){
+            square.innerHTML = '<h1 class="left-cell-title"><span>0</span></h1><h1 class="center-cell-title" style="margin-top: -50px !important"><span>0</span></h1>'
+        }
+        else if (i == 0) {
+        square.innerHTML = `
+        <h1 class="left-cell-title">
+            <span>${j}</span></h1>`;
+        } else if (j == 0) {
+        square.innerHTML = `
+        <h1 class="center-cell-title">
+            <span>${i}</span></h1>`;
+        }
+    </text>
+}
 @{
     ViewBag.Title = "BattleShip powered by D.P.O.I.";
 }
@@ -170,6 +188,7 @@
 
                     // create a new div HTML element for each grid square and make it the right size
                     var square = document.createElement("div");
+                   @AddCellTiltle()
                     GAMEBOARD.appendChild(square);
 
                     // give each div element a unique id based on its row and column, like "s00"
@@ -177,36 +196,30 @@
 
                     // set each grid square's coordinates: multiples of the current row or column number
                     var topPosition = j * SIZE;
-                    var leftPosition = i * SIZE;
-
-                    // use CSS absolute positioning to place each grid square on the page
+                    var leftPosition = i * SIZE; // use CSS absolute positioning to place each grid square on the page
                     square.style.top = topPosition + 'px';
                     square.style.left = leftPosition + 'px';
                     square.className = 'cell normal';
-
                     square.addEventListener('dragenter', drag_enter, false);
                     square.addEventListener('dragleave', drag_leave, false);
                     square.addEventListener('dragenter', drag_over, false);
                     square.addEventListener('drop', drop, false);
-
                     document.body.addEventListener('dragover', drag_over, false);
                 }
             }
         };
 
-
         function buildFireBoard() {
             var newBoard = document.getElementById('docks');
-            newBoard.innerHtml = "";
+            newBoard.innerHTML = "";
             for (i = 0; i < BOARD_INDEX; i++) {
-                for (j = 0; j < BOARD_INDEX; j++) {
-
-                    // create a new div HTML element for each grid square and make it the right size
+                for (j = 0; j < BOARD_INDEX; j++) { // create a new div HTML element for each grid square and make it the right size
                     var square = document.createElement("div");
+                    @AddCellTiltle()
                     newBoard.appendChild(square);
 
                     // give each div element a unique id based on its row and column, like "s00"
-                    square.id = genCellId(j, i);
+                    square.id = genCellId(j, i) + " f";
 
                     // set each grid square's coordinates: multiples of the current row or column number
                     var topPosition = j * SIZE;
