@@ -212,10 +212,10 @@
             container.style.width = size * SIZE + 'px';
 
             container.draggable = true;
-
+            container.style.zIndex = 1;
             DOCKS.appendChild(container);
             container.addEventListener('dragstart', drag_start, false);
-            container.addEventListener('click', rotate);
+            
 
         };
 
@@ -261,7 +261,10 @@
                     var cellsRemaining = (shipWidth / SIZE) - 1;
                     var origin = cell.id.split('-');
                     for (i = 1; i <= cellsRemaining; i++) {
-                        GAMEBOARD.removeChild(document.getElementById(origin[0] + '-' + (parseInt(origin[1]) + i)));
+                        //GAMEBOARD.removeChild(document.getElementById(origin[0] + '-' + (parseInt(origin[1]) + i)));
+                        let cellI = document.getElementById(origin[0] + '-' + (parseInt(origin[1]) + i));
+                        //cellI.style.display = "none";
+                        //cellI.appendChild(ship);
                     }
                 }
                 else {
@@ -269,19 +272,27 @@
                     var origin = cell.id.split('-');
                     for (i = 1; i <= cellsRemaining; i++) {
                         //GAMEBOARD.removeChild(document.getElementById((parseInt(origin[0]) + i) + '-' + origin[1]));
-                        document.getElementById((parseInt(origin[0]) + i) + '-' + origin[1]).style += "display:none;";
+                        let cellI = document.getElementById((parseInt(origin[0]) + i) + '-' + origin[1]);
+                       // cellI.style.display = "none";
+                        //cellI.appendChild(ship);
                     }
+
                 }
-
-
-
-
-
+                ship.addEventListener('click', rotate);
                 //GAMEBOARD.replaceChild(ship, cell);
+             
+                // cell.style.display = "none";
+                ship.style.top = 0;
+                ship.style.left = 0;
                 cell.appendChild(ship);
                 //GAMEBOARD.removeChild(cell);
-                cell.style += "Display:none;";
+                // cell.style += "Display:none;";
                 shipOnArray.hasBeenSet = true;
+
+
+
+
+               
             }
 
             //var dm = document.getElementById('dragme');
