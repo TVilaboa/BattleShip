@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="~/Content/board2.css" />
 
 <h2>Chat</h2>
-<div class="container">
 <input type="text" id="message"/>
 <input type="button" id="sendmessage" value="Send"/>
 <input type="hidden" id="displayname"/>
@@ -22,11 +21,16 @@
 <div id="actions" style="visibility: hidden;">
     <button id="btnSetShips"class="btn btn-default" onclick="setMap();">Set Ships</button>
 </div>
+<div class="container">
 
-<div id="docks">
-</div>
 
-<div id="gameboard">
+
+    <div id="docks" class="left">
+    </div>
+
+
+    <div id="gameboard" class="right">
+    </div>
 </div>
 <!--
 <div class="battlefield battlefield__self">
@@ -73,14 +77,14 @@
         function setMap() {
             if (ships.filter(s => !s.hasBeenSet)[0] == undefined) {
                 $('#carrier').off();
-              $('#battleship').off();
-             $('#destroyer').off();
-               $('#submarine').off();
-              $('#patrol').off();
-              $('#carrier').attr('draggable', false);
-              $('#battleship').attr('draggable', false);
-               $('#destroyer').attr('draggable', false);
-               $('#submarine').attr('draggable', false);
+                $('#battleship').off();
+                $('#destroyer').off();
+                $('#submarine').off();
+                $('#patrol').off();
+                $('#carrier').attr('draggable', false);
+                $('#battleship').attr('draggable', false);
+                $('#destroyer').attr('draggable', false);
+                $('#submarine').attr('draggable', false);
                 $('#patrol').attr('draggable', false);
                 game.server.setMap(ships);
                 $("#btnSetShips").hide();
@@ -92,7 +96,8 @@
         }
 
         function startGame() {
-
+            buildFireBoard();
+            GAMEBOARD.style.opacity = 0.5;
         }
 
         $(function() {
@@ -185,6 +190,39 @@
                     square.addEventListener('drop', drop, false);
 
                     document.body.addEventListener('dragover', drag_over, false);
+                }
+            }
+        };
+
+
+        function buildFireBoard() {
+            var newBoard = document.getElementById('docks');
+            newBoard.innerHtml = "";
+            for (i = 0; i < BOARD_INDEX; i++) {
+                for (j = 0; j < BOARD_INDEX; j++) {
+
+                    // create a new div HTML element for each grid square and make it the right size
+                    var square = document.createElement("div");
+                    newBoard.appendChild(square);
+
+                    // give each div element a unique id based on its row and column, like "s00"
+                    square.id = genCellId(j, i);
+
+                    // set each grid square's coordinates: multiples of the current row or column number
+                    var topPosition = j * SIZE;
+                    var leftPosition = i * SIZE;
+
+                    // use CSS absolute positioning to place each grid square on the page
+                    square.style.top = topPosition + 'px';
+                    square.style.left = leftPosition + 'px';
+                    square.className = 'cell normal';
+
+                    //square.addEventListener('dragenter', drag_enter, false);
+                    //square.addEventListener('dragleave', drag_leave, false);
+                    //square.addEventListener('dragenter', drag_over, false);
+                    //square.addEventListener('drop', drop, false);
+
+                    //document.body.addEventListener('dragover', drag_over, false);
                 }
             }
         };
@@ -426,7 +464,7 @@
             //if (analyzeXAxis && analyzeYAxis)
             //    return true;
             //else
-                return false;
+            return false;
         };
 
 
@@ -453,8 +491,7 @@
 
     </script>
 }
-</div>
-    
+
 <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content" style="top: 100px;">

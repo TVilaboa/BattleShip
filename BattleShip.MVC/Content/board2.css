@@ -1,8 +1,20 @@
 ﻿body {
     margin: 60px auto;
-    width: 70%;
-    max-width: 950px;
+    width: 90%;
+    max-width: 1500px;
 }
+
+.left {
+    float: left;
+    width: 50%;
+}
+
+.right {
+    float: right;
+    width: 50%;
+}
+
+
 
 h1 {
     font-size: 3em;
@@ -58,4 +70,10 @@ p, button, input {
 	height:40px;
     left: 0;
     top: 0;
+}
+
+#discussion {
+    height: 100px;
+    overflow: auto;
+    border: inset;
 }
