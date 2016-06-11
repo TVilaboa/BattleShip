@@ -72,6 +72,16 @@
 
         function setMap() {
             if (ships.filter(s => !s.hasBeenSet)[0] == undefined) {
+                $('#carrier').off();
+              $('#battleship').off();
+             $('#destroyer').off();
+               $('#submarine').off();
+              $('#patrol').off();
+              $('#carrier').attr('draggable', false);
+              $('#battleship').attr('draggable', false);
+               $('#destroyer').attr('draggable', false);
+               $('#submarine').attr('draggable', false);
+                $('#patrol').attr('draggable', false);
                 game.server.setMap(ships);
                 $("#btnSetShips").hide();
             } else {
@@ -114,7 +124,7 @@
             $.connection.hub.disconnected(function() {
                 setTimeout(function() {
                     $.connection.hub.start();
-                }, 500);
+                }, 2000);
             });
         });
 
@@ -167,8 +177,11 @@
                     // use CSS absolute positioning to place each grid square on the page
                     square.style.top = topPosition + 'px';
                     square.style.left = leftPosition + 'px';
+                    square.className = 'cell normal';
 
-                    square.addEventListener('dragover', drag_over, false);
+                    square.addEventListener('dragenter', drag_enter, false);
+                    square.addEventListener('dragleave', drag_leave, false);
+                    square.addEventListener('dragenter', drag_over, false);
                     square.addEventListener('drop', drop, false);
 
                     document.body.addEventListener('dragover', drag_over, false);
@@ -195,11 +208,11 @@
             destroyer.className = 'ships';
             carrier.className = 'ships';
 
-            buildship(1, patrol, 1);
-            buildship(2, submarine, 2);
-            buildship(3, destroyer, 3);
-            buildship(4, battleship, 4);
-            buildship(5, carrier, 5);
+            buildship(2, patrol, 1);
+            buildship(3, submarine, 2);
+            buildship(4, destroyer, 3);
+            buildship(5, battleship, 4);
+            buildship(6, carrier, 5);
         };
       
         function buildship(size, container, position) {
@@ -214,28 +227,35 @@
             container.draggable = true;
             container.style.zIndex = 1;
             DOCKS.appendChild(container);
-            container.addEventListener('dragstart', drag_start, false);
+            $('#' + container.id).on('dragstart', drag_start);
+            //container.addEventListener('dragstart', drag_start, false);
             
 
         };
+     
 
         function rotate(event) {
             event.preventDefault();
 
             var ship = document.getElementById(event.target.id);
-            var shipInArray = ships.filter(s => s.name === event.target.id)[0];
-            shipInArray.isOnXAxis = !shipInArray.isOnXAxis;
-            var height = ship.style.height;
-            var width = ship.style.width;
+            if (validateRotation(ship)) {
+                var shipInArray = ships.filter(s => s.name === event.target.id)[0];
+                shipInArray.isOnXAxis = !shipInArray.isOnXAxis;
+                var height = ship.style.height;
+                var width = ship.style.width;
 
-            ship.style.height = width;
-            ship.style.width = height;
-
+                ship.style.height = width;
+                ship.style.width = height;
+            }
+            else {
+                $('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
+                $('#notificationModal').modal('show');
+            }
         };
 
         function drag_start(event) {
             var style = window.getComputedStyle(event.target, null);
-            event.dataTransfer.setData("text/plain", event.target.id);
+            event.originalEvent.dataTransfer.setData("text/plain", event.target.id);
         };
 
         function drag_over(event) {
@@ -243,71 +263,81 @@
             return false;
         };
 
+        function drag_enter(event) {
+            event.preventDefault();
+            var cell = document.getElementById(event.target.id);
+            if (cell && cell.style.display != 'none')
+                cell.className = 'cell hovered';
+        };
+
+        function drag_leave(event) {
+            event.preventDefault();
+            var cell = document.getElementById(event.target.id);
+            if (cell && cell.style.display != 'none')
+                cell.className = 'cell normal';
+        };
+       
         function drop(event) {
             var ship = document.getElementById(event.dataTransfer.getData("text/plain"));
             var cell = document.getElementById(event.target.id);
-            var shipOnArray = ships.filter(s => s.name === ship.id)[0];
-            shipOnArray.position.xPosition = cell.id.split('-')[1];
-            shipOnArray.position.yPosition = cell.id.split('-')[0];
-            if (validateDrop(ship, cell)) {
-                ship.style.top = cell.style.top;
-                ship.style.left = cell.style.left;
+
+            cell.className = 'cell normal';
+
+            if (evaluateDrop(ship, cell)) {
+                var shipOnArray = ships.filter(s => s.name === ship.id)[0];
+
+                shipOnArray.position.xPosition = cell.id.split('-')[1];
+                shipOnArray.position.yPosition = cell.id.split('-')[0];
+
                 ship.style.background = 'orange';
 
                 var shipHeight = getIntHeight(ship);
                 var shipWidth = getIntWidth(ship);
-                var direction;
-                if (ship.style.width > ship.style.height) {
-                    var cellsRemaining = (shipWidth / SIZE) - 1;
-                    var origin = cell.id.split('-');
-                    for (i = 1; i <= cellsRemaining; i++) {
-                        //GAMEBOARD.removeChild(document.getElementById(origin[0] + '-' + (parseInt(origin[1]) + i)));
-                        let cellI = document.getElementById(origin[0] + '-' + (parseInt(origin[1]) + i));
-                        //cellI.style.display = "none";
-                        //cellI.appendChild(ship);
-                    }
-                }
-                else {
-                    var cellsRemaining = (shipHeight / SIZE) - 1;
-                    var origin = cell.id.split('-');
-                    for (i = 1; i <= cellsRemaining; i++) {
-                        //GAMEBOARD.removeChild(document.getElementById((parseInt(origin[0]) + i) + '-' + origin[1]));
-                        let cellI = document.getElementById((parseInt(origin[0]) + i) + '-' + origin[1]);
-                       // cellI.style.display = "none";
-                        //cellI.appendChild(ship);
-                    }
 
-                }
-                ship.addEventListener('click', rotate);
-                //GAMEBOARD.replaceChild(ship, cell);
-             
-                // cell.style.display = "none";
+                //if (ship.style.width > ship.style.height) {
+                //    var cellsRemaining = (shipWidth / SIZE) - 1;
+                //    var origin = cell.id.split('-');
+                //    for (i = 1; i <= cellsRemaining; i++) {
+                //        let cellI = document.getElementById(origin[0] + '-' + (parseInt(origin[1]) + i));
+                //    }
+                //}
+                //else {
+                //    var cellsRemaining = (shipHeight / SIZE) - 1;
+                //    var origin = cell.id.split('-');
+                //    for (i = 1; i <= cellsRemaining; i++) {
+                //        let cellI = document.getElementById((parseInt(origin[0]) + i) + '-' + origin[1]);
+                //    }
+
+                //}
+                //ship.addEventListener('click', rotate);
+                $('#' + ship.id).off('click').on('click', rotate);
                 ship.style.top = 0;
                 ship.style.left = 0;
                 cell.appendChild(ship);
-                //GAMEBOARD.removeChild(cell);
-                // cell.style += "Display:none;";
+
+                handleShipPositioning(ship, ship.parentElement);
+
                 shipOnArray.hasBeenSet = true;
 
-
-
-
-               
             }
-
-            //var dm = document.getElementById('dragme');
-            //dm.style.left = (event.clientX + parseInt(offset[0], 10)) + 'px';
-            //dm.style.top = (event.clientY + parseInt(offset[1], 10)) + 'px';
+            else {
+                $('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
+                $('#notificationModal').modal('show');
+            }
 
             event.preventDefault();
             return false;
         };
 
         function getIntHeight(ship) {
+            if (ship.style.height == '')
+                return 40;
             return parseInt(ship.style.height.replace('px', ''));
         };
 
         function getIntWidth(ship) {
+            if (ship.style.width == '')
+                return 40;
             return parseInt(ship.style.width.replace('px', ''));
         };
 
@@ -335,6 +365,71 @@
 
             return result;
         };
+
+        function validateRotation(ship) {
+            var result;
+
+            var cell = ship.parentElement;
+
+            var projectedHeight = getIntWidth(ship);
+            var projectedWidth = getIntHeight(ship);
+
+            var exists;
+            if (projectedHeight > projectedWidth) {
+                var size = (projectedHeight / SIZE) - 1;
+                var validString = cell.id.split('-')[0];
+                exists = (parseInt(validString) + size) + '-' + cell.id.split('-')[1];
+            }
+            else {
+                var size = (projectedWidth / SIZE) - 1;
+                var validString = cell.id.split('-')[1];
+                exists = cell.id.split('-')[0] + '-' + (parseInt(validString) + size);
+            }
+
+            if (document.getElementById(exists))
+                result = true;
+            else result = false;
+
+            return result;
+
+        };
+
+        function handleShipPositioning(ship, cell) {
+
+            var size = (getIntWidth(ship) / SIZE) - 1;
+
+            var position = cell.id.split('-');
+            var exists = position[0] + '-' + (parseInt(position[1]) + size);
+
+            if (!document.getElementById(exists)) {
+                var width = ship.style.width;
+                var height = ship.style.height;
+                ship.style.height = width;
+                ship.style.width = height;
+                var shipInArray = ships.filter(s => s.name === event.target.id)[0];
+                shipInArray.isOnXAxis = false;
+            }
+
+        };
+
+        function evaluateDrop(ship, cell) {
+            var position = cell.id.split('-');
+            var size = (getIntWidth(ship) / SIZE) - 1;
+
+            var analyzeXAxis = document.getElementById((parseInt(position[1]) + size) + '-' + position[0]);
+            var analyzeYAxis = document.getElementById(position[1] + '-' + (parseInt(position[0]) + size));
+            if ((ship.style.width > ship.style.height || ship.style.height == "") && analyzeXAxis) {
+                return true;
+            } else if ((ship.style.height > ship.style.width || ship.style.width == "") && analyzeYAxis) {
+                return true;
+            }
+            //if (analyzeXAxis && analyzeYAxis)
+            //    return true;
+            //else
+                return false;
+        };
+
+
 
         function receiveHitResponse(coordinates, wasHit, hasGameEnded) {
             //draw();
