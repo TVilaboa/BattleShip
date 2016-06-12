@@ -482,9 +482,27 @@
 
 
 
-        function receiveHitResponse(coordinates, wasHit, hasGameEnded) {
-            //draw();
-            endTurn();
+        function receiveHitResponse(coordinates, isMyHit, wasHit, hasGameEnded) {
+            if (isMyHit) {  //Dibujar respuesta al tiro que hizo el jugador
+                //draw();
+            } else { //Dibujar tiro del enemigo
+                //draw();
+            }
+            if (hasGameEnded) {
+                if (isMyHit) {  //Gano
+                    $("#statusModal").text("You win!!! Congratulations!!");
+                    $('#notificationModalContent').css("background-Color", "Green");
+                    $('#notificationModal').modal('show');
+                } else {  //Perdio
+                    $("#statusModal").text("You lost!!!");
+                    $('#notificationModalContent').css("background-Color", "Red");
+                    $('#notificationModal').modal('show');
+                }
+            } else {
+                endTurn();
+            }
+           
+           
         };
 
         function sendHitToServer(coordinates) {
@@ -507,7 +525,7 @@
 
 <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content" style="top: 100px;">
+        <div class="modal-content" id="notificationModalContent" style="top: 100px;">
             <div class="modal-header">
                 <h4 class="modal-title" id="deleteLabel">Notification</h4>
             </div>

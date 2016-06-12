@@ -114,7 +114,8 @@ namespace BattleShip.MVC.Hubs
                     new UserService().Update(dbHittedPlayer);
                 }
 
-                Clients.Caller.receiveHitResponse(position, wasHit, hasGameEnded);
+                Clients.Caller.receiveHitResponse(position,true, wasHit, hasGameEnded);
+                Clients.Client(hittedPlayer.ConnectionId)(position, false, wasHit, hasGameEnded);
             }
         }
 
