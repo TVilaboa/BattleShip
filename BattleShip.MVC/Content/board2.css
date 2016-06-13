@@ -35,6 +35,7 @@
 
 div h1 span{
     background-color: white;
+    z-index: 2;
 }
 
 

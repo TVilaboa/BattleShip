@@ -78,7 +78,8 @@ namespace BattleShip.Data.DataBase
             
             modelBuilder.Properties<DateTime>().Configure(c => c.HasColumnType("datetime2"));
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
-            modelBuilder.Entity<User>().HasMany<GameHistory>(u => u.GameHistories).WithRequired(g => g.Enemy);
+          
+
 
             //modelBuilder.Configurations.Add(new UserMap());
 

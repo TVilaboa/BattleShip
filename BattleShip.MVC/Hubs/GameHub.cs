@@ -80,7 +80,7 @@ namespace BattleShip.MVC.Hubs
                         p.Player1.ConnectionId == Context.ConnectionId || p.Player2.ConnectionId == Context.ConnectionId);
             var hittedPlayer = playRoom.Player1.ConnectionId != Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
             var hitterPlayer = playRoom.Player1.ConnectionId == Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
-            if (hitterPlayer.Stage == User.GameStage.Firing)
+            if (hitterPlayer.Stage == User.GameStage.Firing && Engine.CanHitPosition(hittedPlayer,position))
             {
                 var wasHit = Engine.WasHit(hittedPlayer, position);
                 hittedPlayer.Map.Hits.Add(new Hit { HasHit = wasHit, HitPosition = position });
@@ -92,7 +92,8 @@ namespace BattleShip.MVC.Hubs
                     var dbHitterPlayer = new UserService().Get(hitterPlayer.Id);
                     dbHitterPlayer.GameHistories.Add(new GameHistory
                     {
-                        Enemy = hittedPlayer,
+                        
+                        EnemyUserName = hittedPlayer.UserName,
                         Code = playRoom.Guid,
                         Hitted = hittedPlayer.Map.Hits.Count(h => h.HasHit),
                         Missed = hittedPlayer.Map.Hits.Count(h => !h.HasHit),
@@ -101,7 +102,8 @@ namespace BattleShip.MVC.Hubs
                     });
                     dbHittedPlayer.GameHistories.Add(new GameHistory
                     {
-                        Enemy = hitterPlayer,
+
+                        EnemyUserName = hitterPlayer.UserName,
                         Code = playRoom.Guid,
                         Hitted = hitterPlayer.Map.Hits.Count(h => h.HasHit),
                         Missed = hitterPlayer.Map.Hits.Count(h => !h.HasHit),
@@ -114,7 +116,8 @@ namespace BattleShip.MVC.Hubs
                     new UserService().Update(dbHittedPlayer);
                 }
 
-                Clients.Caller.receiveHitResponse(position, wasHit, hasGameEnded);
+                Clients.Caller.receiveHitResponse(position,true, wasHit, hasGameEnded);
+                Clients.Client(hittedPlayer.ConnectionId).receiveHitResponse(position, false, wasHit, hasGameEnded);
             }
         }
 

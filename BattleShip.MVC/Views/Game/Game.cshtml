@@ -39,7 +39,7 @@
 <div id="actions" style="visibility: hidden;">
     <button id="btnSetShips"class="btn btn-default" onclick="setMap();">Set Ships</button>
 </div>
-<div class="container">
+@*<div class="container">
 
 
 
@@ -48,6 +48,24 @@
 
 
     <div id="gameboard" class="right">
+    </div>
+</div>*@
+
+<div class="row">
+    <div class="col-md-4">
+        <div id="docks">
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div id="gameboard">
+            <div class="outer"></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div id="fireboard">
+            <div class="outer"></div>
+        </div>
     </div>
 </div>
 
@@ -74,11 +92,12 @@
             this.isOnXAxis = true;
             this.name = name;
             this.hasBeenSet = false;
+            this.Size = lifes;
         }
 
         function Position() {
-            this.xPosition = 0;
-            this.yPosition = 0;
+            this.XPosition = 0;
+            this.YPosition = 0;
         }
 
         function setMap() {
@@ -99,12 +118,18 @@
                 $('#statusModal').text("You must set all ships...");
                 $('#notificationModal').modal('show');
             }
-           
+
         }
 
         function startGame() {
-            buildFireBoard();
             GAMEBOARD.style.opacity = 0.5;
+            GAMEBOARD.parentElement.className = 'col-md-6';
+            var docks = document.getElementById('docks');
+            var parent = docks.parentElement;
+            parent.parentElement.removeChild(parent);
+            parent.removeChild(docks);
+            //GAMEBOARD
+            buildFireBoard();
         }
 
         $(function() {
@@ -199,7 +224,8 @@
         };
 
         function buildFireBoard() {
-            var newBoard = document.getElementById('docks');
+             //document.removeChild(document.getElementById('docks'));
+            var newBoard = document.getElementById('fireboard').children[0];
             newBoard.innerHTML = "";
             for (i = 0; i < BOARD_INDEX; i++) {
                 for (j = 0; j < BOARD_INDEX; j++) { // create a new div HTML element for each grid square and make it the right size
@@ -219,9 +245,12 @@
                     square.style.left = leftPosition + 'px';
                     square.className = 'cell normal';
 
-                    square.addEventListener('click', fire,false);
+                    square.addEventListener('mouseenter', drag_enter, false);
+                    square.addEventListener('mouseleave', drag_leave, false);
+                    square.addEventListener('click', fire, false);
                 }
             }
+            newBoard.parentElement.parentElement.className = 'col-md-6';
         };
 
         function loadShips() {
@@ -249,7 +278,7 @@
             buildship(5, battleship, 4);
             buildship(6, carrier, 5);
         };
-      
+
         function buildship(size, container, position) {
 
             var topPosition = position * SIZE;
@@ -265,7 +294,7 @@
             $('#' + container.id).on('dragstart', drag_start);
 
         };
-     
+
 
         function rotate(event) {
             event.preventDefault();
@@ -309,8 +338,42 @@
             if (cell && cell.style.display != 'none')
                 cell.className = 'cell normal';
         };
-       
+
         function drop(event) {
+            //var ship = document.getElementById(event.dataTransfer.getData("text/plain"));
+            //var cell = document.getElementById(event.target.id);
+
+            //cell.className = 'cell normal';
+
+            //if (evaluateDrop(ship, cell)) {
+            //    var shipOnArray = ships.filter(s => s.name === ship.id)[0];
+
+            //    shipOnArray.position.XPosition = cell.id.split('-')[1];
+            //    shipOnArray.position.YPosition = cell.id.split('-')[0];
+
+            //    ship.style.background = 'orange';
+
+            //    var shipHeight = getIntHeight(ship);
+            //    var shipWidth = getIntWidth(ship);
+
+            //    $('#' + ship.id).off('click').on('click', rotate);
+            //    ship.style.top = 0;
+            //    ship.style.left = 0;
+            //    cell.appendChild(ship);
+
+            //    handleShipPositioning(ship, ship.parentElement);
+
+            //    shipOnArray.hasBeenSet = true;
+
+            //}
+            //else {
+            //    $('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
+            //    $('#notificationModal').modal('show');
+            //}
+
+            //event.preventDefault();
+            //return false;
+
             var ship = document.getElementById(event.dataTransfer.getData("text/plain"));
             var cell = document.getElementById(event.target.id);
 
@@ -319,15 +382,31 @@
             if (evaluateDrop(ship, cell)) {
                 var shipOnArray = ships.filter(s => s.name === ship.id)[0];
 
-                shipOnArray.position.xPosition = cell.id.split('-')[1];
-                shipOnArray.position.yPosition = cell.id.split('-')[0];
+                shipOnArray.position.XPosition = cell.id.split('-')[1];
+                shipOnArray.position.YPosition = cell.id.split('-')[0];
 
                 ship.style.background = 'orange';
 
                 var shipHeight = getIntHeight(ship);
                 var shipWidth = getIntWidth(ship);
 
+                if (ship.style.width > ship.style.height) {
+                    var cellsRemaining = (shipWidth / SIZE) - 1;
+                    var origin = cell.id.split('-');
+                    for (i = 1; i <= cellsRemaining; i++) {
+                        let cellI = document.getElementById(origin[0] + '-' + (parseInt(origin[1]) + i));
+                    }
+                }
+                else {
+                    var cellsRemaining = (shipHeight / SIZE) - 1;
+                    var origin = cell.id.split('-');
+                    for (i = 1; i <= cellsRemaining; i++) {
+                        let cellI = document.getElementById((parseInt(origin[0]) + i) + '-' + origin[1]);
+                    }
+
+                }
                 $('#' + ship.id).off('click').on('click', rotate);
+
                 ship.style.top = 0;
                 ship.style.left = 0;
                 cell.appendChild(ship);
@@ -447,12 +526,42 @@
         function fire() {
             //TODO add call to sendHitToServer
             var cell = document.getElementById(event.target.id);
+            var position = new Position();
+            position.XPosition = cell.id.split('-')[1].split(' ')[0];
+            position.YPosition = cell.id.split('-')[0];
+            sendHitToServer(position);
         };
 
-        function receiveHitResponse(coordinates, wasHit, hasGameEnded) {
-            //TODO if clients was hitter, show message and update fireBoard
-            //else update own board
-            endTurn();
+        function receiveHitResponse(coordinates, isMyHit, wasHit, hasGameEnded) {
+            var color;
+            if (isMyHit) {  //Dibujar respuesta al tiro que hizo el jugador
+                color = wasHit ? "Green" : "Red";
+                document.getElementById(coordinates.YPosition + '-' + coordinates.XPosition + ' f').style.backgroundColor = color;
+            } else { //Dibujar tiro del enemigo
+                color = wasHit ? "Red" : "Green";
+                var fill = document.createElement('div');
+                fill.style.backgroundColor = color;
+                fill.style.zIndex = 2;
+                fill.className = "cell normal";
+                document.getElementById(coordinates.YPosition + '-' + coordinates.XPosition).appendChild(fill);
+            }
+            if (hasGameEnded) {
+                if (isMyHit) {  //Gano
+                    $("#statusModal").text("You win!!! Congratulations!!");
+                    $('#notificationModalContent').css("background-Color", "Green");
+                   
+                } else {  //Perdio
+                    $("#statusModal").text("You lost!!!");
+                    $('#notificationModalContent').css("background-Color", "Red");
+                  
+                }
+                $('#notificationModal').modal('show');
+                $('#btnPlayAgain').show();
+            } else if(isMyHit){
+                endTurn();
+            }
+
+
         };
 
         function sendHitToServer(coordinates) {
@@ -475,7 +584,7 @@
 
 <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content" style="top: 100px;">
+        <div class="modal-content" id="notificationModalContent" style="top: 100px;">
             <div class="modal-header">
                 <h4 class="modal-title" id="deleteLabel">Notification</h4>
             </div>
@@ -483,6 +592,7 @@
 
 
                 <p id="statusModal">Its your turn now!!</p>
+                @Html.ActionLink("Play Again", "Game", "Game", new { }, new { @class = "btn btn-default center-block", style ="Display: none;" ,id ="btnPlayAgain" })
             </div>
            
         </div>

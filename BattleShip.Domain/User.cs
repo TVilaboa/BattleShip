@@ -21,6 +21,7 @@ namespace BattleShip.Domain
         }
         [NotMapped]
         public Map Map { get; set; }
+       
         public virtual List<GameHistory> GameHistories { get; set; } = new List<GameHistory>();
         public virtual GameStage Stage { get; set; }
 

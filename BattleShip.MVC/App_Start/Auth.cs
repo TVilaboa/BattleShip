@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.Facebook;
 using Owin;
 
 namespace BattleShip.MVC
@@ -45,11 +46,17 @@ namespace BattleShip.MVC
             // Once you check this option, your second step of verification during the login process will be remembered on the device where you logged in from.
             // This is similar to the RememberMe option when you log in.
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
-
-            app.UseFacebookAuthentication(
-               appId: "239764423065958",
-               appSecret: "fc7dba67c4010c99ca77b449e617fca4");
-
+            var facebookAuthenticationOptions = new FacebookAuthenticationOptions()
+            {
+                AppId = "239764423065958",
+                AppSecret = "fc7dba67c4010c99ca77b449e617fca4"
+            };
+            facebookAuthenticationOptions.Scope.Add("email");
+            facebookAuthenticationOptions.Scope.Add("public_profile");
+            //app.UseFacebookAuthentication(
+            //   appId: "239764423065958",
+            //   appSecret: "fc7dba67c4010c99ca77b449e617fca4");
+            app.UseFacebookAuthentication(facebookAuthenticationOptions);
             //app.UseGoogleAuthentication(
             //     clientId: "000000000000000.apps.googleusercontent.com",
             //     clientSecret: "000000000000000");

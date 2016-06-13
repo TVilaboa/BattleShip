@@ -16,12 +16,31 @@ namespace BattleShip.Domain
 
         public bool WasHit(User user, Position position)
         {
-            return  user.Map.Ships.Any(s => s.Position == position);//TODO revisar por el resto de las coordinadas del barco
+            var comprarer = Position.YPositionXPositionComparer;
+            var hittenShip = user.Map.Ships.Find(s => s.AllPositions.Any(p => comprarer.Equals(p, position)));
+            if (hittenShip != null)
+            {
+                hittenShip.Hit();
+                return true;
+                
+            }
+            else
+            {
+                return false;
+            }
+           /* return  hittenShip;*///TODO revisar por el resto de las coordinadas del barco
         }
 
         public bool HasGameEnded(User user)
         {
             return !user.Map.Ships.Any(s => s.Lifes > 0);
+        }
+
+        public bool CanHitPosition(User hittedPlayer, Position position)
+        {
+            var comprarer = Position.YPositionXPositionComparer;
+            var positionHasBeenHit = hittedPlayer.Map.Hits.Any(h => comprarer.Equals(h.HitPosition, position));
+            return !positionHasBeenHit;
         }
     }
 }
