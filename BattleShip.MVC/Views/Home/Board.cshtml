@@ -94,7 +94,7 @@
 
         function startGame() {
             GAMEBOARD.style.opacity = 0.5;
-            GAMEBOARD.parentElement.className = 'col-md-6'
+            GAMEBOARD.parentElement.className = 'col-md-6';
             var docks = document.getElementById('docks');
             var parent = docks.parentElement;
             parent.parentElement.removeChild(parent);
@@ -264,6 +264,8 @@
             container.style.left = leftPosition + 'px';
             container.style.width = size * SIZE + 'px';
 
+            container.style.backgroundSize = (size * SIZE) + 'px' + ' 40px';
+
             container.draggable = true;
             container.style.zIndex = 1;
             DOCKS.appendChild(container);
@@ -277,14 +279,15 @@
             event.preventDefault();
 
             var ship = document.getElementById(event.target.id);
+            //var rotateValue = ship.rotateValue;
             if (validateRotation(ship)) {
                 var shipInArray = ships.filter(s => s.name === event.target.id)[0];
                 shipInArray.isOnXAxis = !shipInArray.isOnXAxis;
-                var height = ship.style.height;
-                var width = ship.style.width;
 
-                ship.style.height = width;
-                ship.style.width = height;
+                //90*rotateValue
+                ship.style.transform = 'rotate('+ 90 +'deg)';
+                ship.style.transformOrigin = '12% 50%';
+
             }
             else {
                 $('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
@@ -317,55 +320,6 @@
         };
 
         function drop(event) {
-            //var ship = document.getElementById(event.dataTransfer.getData("text/plain"));
-            //var cell = document.getElementById(event.target.id);
-
-            //cell.className = 'cell normal';
-
-            //if (evaluateDrop(ship, cell)) {
-            //    var shipOnArray = ships.filter(s => s.name === ship.id)[0];
-
-            //    shipOnArray.position.xPosition = cell.id.split('-')[1];
-            //    shipOnArray.position.yPosition = cell.id.split('-')[0];
-
-            //    ship.style.background = 'orange';
-
-            //    var shipHeight = getIntHeight(ship);
-            //    var shipWidth = getIntWidth(ship);
-
-            //    if (ship.style.width > ship.style.height) {
-            //        var cellsRemaining = (shipWidth / SIZE) - 1;
-            //        var origin = cell.id.split('-');
-            //        for (i = 1; i <= cellsRemaining; i++) {
-            //            let cellI = document.getElementById(origin[0] + '-' + (parseInt(origin[1]) + i));
-            //        }
-            //    }
-            //    else {
-            //        var cellsRemaining = (shipHeight / SIZE) - 1;
-            //        var origin = cell.id.split('-');
-            //        for (i = 1; i <= cellsRemaining; i++) {
-            //            let cellI = document.getElementById((parseInt(origin[0]) + i) + '-' + origin[1]);
-            //        }
-
-            //    }
-            //    ship.addEventListener('click', rotate);
-
-            //    ship.style.top = 0;
-            //    ship.style.left = 0;
-            //    cell.appendChild(ship);
-
-            //    handleShipPositioning(ship, ship.parentElement);
-
-            //    shipOnArray.hasBeenSet = true;
-
-            //}
-            //else {
-            //    $('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
-            //    $('#notificationModal').modal('show');
-            //}
-
-            //event.preventDefault();
-            //return false;
 
             var ship = document.getElementById(event.dataTransfer.getData("text/plain"));
             var cell = document.getElementById(event.target.id);
@@ -377,8 +331,6 @@
 
                 shipOnArray.position.xPosition = cell.id.split('-')[1];
                 shipOnArray.position.yPosition = cell.id.split('-')[0];
-
-                ship.style.background = 'orange';
 
                 var shipHeight = getIntHeight(ship);
                 var shipWidth = getIntWidth(ship);
@@ -402,6 +354,7 @@
 
                 ship.style.top = 0;
                 ship.style.left = 0;
+                ship.className = 'ships';
                 cell.appendChild(ship);
 
                 handleShipPositioning(ship, ship.parentElement);
@@ -463,18 +416,21 @@
             var id = cell.id.split('-');
             var result = true;
             if (height > width) {
-                for (i = parseInt(id[1]) ; i <= (parseInt(id[1]) + size) ; i++) {
-                    if (!document.getElementById(cell[0] + '-' + i))
-                        result = false;
+                for (i = parseInt(id[0]) + 1 ; i <= (parseInt(id[0]) + size) ; i++) {
+                    var aux = document.getElementById(i + '-' + id[1]);
+                    //if (aux && aux.style.display == 'none')
+                    //    result = false;
                 }
             }
 
             if (width > height) {
-                for (i = parseInt(id[0]) ; i <= (parseInt(id[0]) + size) ; i++) {
-                    if (!document.getElementById(i + '-' + i))
-                        result = false;
+                for (i = parseInt(id[1]) + 1 ; i <= (parseInt(id[1]) + size) ; i++) {
+                    //var aux = document.getElementById(id[0] + '-' + i);
+                    //if (aux && aux.style.display == 'none')
+                    //    result = false;
                 }
             }
+            return result;
         };
 
             function handleShipPositioning(ship, cell) {

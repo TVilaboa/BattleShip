@@ -57,7 +57,7 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td data-title="Enemy">@item.Enemy.UserName</td>
+                            <td data-title="Enemy">@item.EnemyUserName</td>
                             <td data-title="Result">
                                @item.Status
                             </td>
@@ -65,10 +65,17 @@
                                 @item.Ended
                             </td>
                             <td data-title="Efficiency">
-                                @(item.Hitted/(item.Hitted + item.Missed) )
+                                @if (item.Hitted != 0 && item.Missed != 0)
+                                {
+                                    @($"{((item.Hitted/(float) (item.Hitted + item.Missed))*100):0.##\\%}")
+                                }
+                                else
+                                {<text>NaN</text>
+                                }
+
                             </td>
                             <td data-title="Duration">
-                                @item.Duration
+                                @item.Duration (mins)
                             </td>
 
                         </tr>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BattleShip.Domain
 {
@@ -8,9 +9,8 @@ namespace BattleShip.Domain
         public string Code { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime Ended { get; set; } = DateTime.Now;
-        public virtual User Enemy { get; set; }
         public virtual GameStatus Status { get; set; }
-
+        public string EnemyUserName { get; set; }
         public enum GameStatus
         {
             Win,
