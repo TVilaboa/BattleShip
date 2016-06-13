@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNet.Identity
+
 @{
     ViewBag.Title = "BattleShip powered by D.P.O.I.";
 }
@@ -23,10 +24,22 @@
         <button id="btnSetShips" class="btn btn-default" onclick="setMap();">Set Ships</button>
     </div>
 
-    <div id="docks">
-    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div id="docks">
+            </div>
+        </div>
 
-    <div id="gameboard">
+        <div class="col-md-4">
+            <div id="gameboard">
+                <div class="outer"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div id="fireboard">
+                <div class="outer"></div>
+            </div>
+        </div>
     </div>
 
     @section scripts {
@@ -61,17 +74,33 @@
 
         function setMap() {
             if (ships.filter(s => !s.hasBeenSet)[0] == undefined) {
+                $('#carrier').off();
+                $('#battleship').off();
+                $('#destroyer').off();
+                $('#submarine').off();
+                $('#patrol').off();
+                $('#carrier').attr('draggable', false);
+                $('#battleship').attr('draggable', false);
+                $('#destroyer').attr('draggable', false);
+                $('#submarine').attr('draggable', false);
+                $('#patrol').attr('draggable', false);
                 game.server.setMap(ships);
                 $("#btnSetShips").hide();
             } else {
                 $('#statusModal').text("You must set all ships...");
                 $('#notificationModal').modal('show');
             }
-
         }
 
         function startGame() {
-
+            GAMEBOARD.style.opacity = 0.5;
+            GAMEBOARD.parentElement.className = 'col-md-6';
+            var docks = document.getElementById('docks');
+            var parent = docks.parentElement;
+            parent.parentElement.removeChild(parent);
+            parent.removeChild(docks);
+            //GAMEBOARD
+            buildFireBoard();
         }
 
         $(function() {
@@ -138,13 +167,14 @@
             $('#discussion').append('<li><strong>' + htmlEncode(name)
                 + '</strong>: ' + htmlEncode(message) + '</li>');
         };
+
         function buildBoard() {
             for (i = 0; i < BOARD_INDEX; i++) {
                 for (j = 0; j < BOARD_INDEX; j++) {
 
                     // create a new div HTML element for each grid square and make it the right size
                     var square = document.createElement("div");
-                    GAMEBOARD.appendChild(square);
+                    GAMEBOARD.children[0].appendChild(square);
 
                     // give each div element a unique id based on its row and column, like "s00"
                     square.id = genCellId(j, i);
@@ -166,6 +196,36 @@
                     document.body.addEventListener('dragover', drag_over, false);
                 }
             }
+        };
+
+        function buildFireBoard() {
+            //document.removeChild(document.getElementById('docks'));
+            var newBoard = document.getElementById('fireboard').children[0];
+            newBoard.innerHTML = "";
+            for (i = 0; i < BOARD_INDEX; i++) {
+                for (j = 0; j < BOARD_INDEX; j++) { // create a new div HTML element for each grid square and make it the right size
+                    var square = document.createElement("div");
+                    
+                    newBoard.appendChild(square);
+
+                    // give each div element a unique id based on its row and column, like "s00"
+                    square.id = genCellId(j, i) + " f";
+
+                    // set each grid square's coordinates: multiples of the current row or column number
+                    var topPosition = j * SIZE;
+                    var leftPosition = i * SIZE;
+
+                    // use CSS absolute positioning to place each grid square on the page
+                    square.style.top = topPosition + 'px';
+                    square.style.left = leftPosition + 'px';
+                    square.className = 'cell normal';
+
+                    square.addEventListener('mouseenter', drag_enter, false);
+                    square.addEventListener('mouseleave', drag_leave, false);
+                    square.addEventListener('click', fire, false);
+                }
+            }
+            newBoard.parentElement.parentElement.className = 'col-md-6';
         };
 
 
@@ -208,6 +268,7 @@
             container.style.zIndex = 1;
             DOCKS.appendChild(container);
             container.addEventListener('dragstart', drag_start, false);
+            //$('#' + container.id).on('dragstart', drag_start);
 
 
         };
@@ -256,6 +317,56 @@
         };
 
         function drop(event) {
+            //var ship = document.getElementById(event.dataTransfer.getData("text/plain"));
+            //var cell = document.getElementById(event.target.id);
+
+            //cell.className = 'cell normal';
+
+            //if (evaluateDrop(ship, cell)) {
+            //    var shipOnArray = ships.filter(s => s.name === ship.id)[0];
+
+            //    shipOnArray.position.xPosition = cell.id.split('-')[1];
+            //    shipOnArray.position.yPosition = cell.id.split('-')[0];
+
+            //    ship.style.background = 'orange';
+
+            //    var shipHeight = getIntHeight(ship);
+            //    var shipWidth = getIntWidth(ship);
+
+            //    if (ship.style.width > ship.style.height) {
+            //        var cellsRemaining = (shipWidth / SIZE) - 1;
+            //        var origin = cell.id.split('-');
+            //        for (i = 1; i <= cellsRemaining; i++) {
+            //            let cellI = document.getElementById(origin[0] + '-' + (parseInt(origin[1]) + i));
+            //        }
+            //    }
+            //    else {
+            //        var cellsRemaining = (shipHeight / SIZE) - 1;
+            //        var origin = cell.id.split('-');
+            //        for (i = 1; i <= cellsRemaining; i++) {
+            //            let cellI = document.getElementById((parseInt(origin[0]) + i) + '-' + origin[1]);
+            //        }
+
+            //    }
+            //    ship.addEventListener('click', rotate);
+
+            //    ship.style.top = 0;
+            //    ship.style.left = 0;
+            //    cell.appendChild(ship);
+
+            //    handleShipPositioning(ship, ship.parentElement);
+
+            //    shipOnArray.hasBeenSet = true;
+
+            //}
+            //else {
+            //    $('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
+            //    $('#notificationModal').modal('show');
+            //}
+
+            //event.preventDefault();
+            //return false;
+
             var ship = document.getElementById(event.dataTransfer.getData("text/plain"));
             var cell = document.getElementById(event.target.id);
 
@@ -305,6 +416,7 @@
 
             event.preventDefault();
             return false;
+
         };
 
         function getIntHeight(ship) {
@@ -366,16 +478,34 @@
         };
 
         function evaluateDrop(ship, cell) {
+            //var position = cell.id.split('-');
+            //var size = (getIntWidth(ship) / SIZE) - 1;
+
+            //var analyzeXAxis = document.getElementById((parseInt(position[0] + size) + '-' + position[1]));
+            //var analyzeYAxis = document.getElementById(position[0] + '-' + (parseInt(position[1] + size)));
+
+            //if (analyzeXAxis && analyzeYAxis)
+            //    return true;
+            //else
+            //    return false;
+
             var position = cell.id.split('-');
             var size = (getIntWidth(ship) / SIZE) - 1;
 
-            var analyzeXAxis = document.getElementById((parseInt(position[0] + size) + '-' + position[1]));
-            var analyzeYAxis = document.getElementById(position[0] + '-' + (parseInt(position[1] + size)));
-
-            if (analyzeXAxis && analyzeYAxis)
+            var analyzeXAxis = document.getElementById((parseInt(position[1]) + size) + '-' + position[0]);
+            var analyzeYAxis = document.getElementById(position[1] + '-' + (parseInt(position[0]) + size));
+            if ((ship.style.width > ship.style.height || ship.style.height == "") && analyzeXAxis) {
                 return true;
-            else
-                return false;
+            } else if ((ship.style.height > ship.style.width || ship.style.width == "") && analyzeYAxis) {
+                return true;
+            }
+
+            return false;
+        };
+
+        function fire() {
+            //TODO add call to sendHitToServer
+            var cell = document.getElementById(event.target.id);
         };
 
         function receiveHitResponse(coordinates, wasHit, hasGameEnded) {

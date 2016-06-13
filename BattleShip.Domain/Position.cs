@@ -7,6 +7,8 @@ namespace BattleShip.Domain
         public int XPosition { get; set; }
         public int YPosition { get; set; }
 
+       
+
         private sealed class YPositionXPositionEqualityComparer : IEqualityComparer<Position>
         {
             public bool Equals(Position x, Position y)
