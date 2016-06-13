@@ -451,7 +451,7 @@
                 exists = cell.id.split('-')[0] + '-' + (parseInt(validString) + size);
             }
 
-            if (document.getElementById(exists))
+            if (document.getElementById(exists) && checkForOtherShips(projectedHeight,projectedWidth,cell,size))
                 result = true;
             else result = false;
 
@@ -459,73 +459,91 @@
 
         };
 
-        function handleShipPositioning(ship, cell) {
+        function checkForOtherShips(height, width, cell,size) {
+            var id = cell.id.split('-');
+            var result = true;
+            if (height > width) {
+                for (i = parseInt(id[1]) ; i <= (parseInt(id[1]) + size) ; i++) {
+                    if (!document.getElementById(cell[0] + '-' + i))
+                        result = false;
+                }
+            }
+
+            if (width > height) {
+                for (i = parseInt(id[0]) ; i <= (parseInt(id[0]) + size) ; i++) {
+                    if (!document.getElementById(i + '-' + i))
+                        result = false;
+                }
+            }
+        };
+
+            function handleShipPositioning(ship, cell) {
            
-            var size = (getIntWidth(ship) / SIZE) - 1;
+                var size = (getIntWidth(ship) / SIZE) - 1;
 
-            var position = cell.id.split('-');
-            var exists = position[0] + '-' + (parseInt(position[1]) + size);
+                var position = cell.id.split('-');
+                var exists = position[0] + '-' + (parseInt(position[1]) + size);
 
-            if (!document.getElementById(exists)) {
-                var width = ship.style.width;
-                var height = ship.style.height;
-                ship.style.height = width;
-                ship.style.width = height;
-                var shipInArray = ships.filter(s => s.name === event.target.id)[0];
-                shipInArray.isOnXAxis = false;
-            }
+                if (!document.getElementById(exists)) {
+                    var width = ship.style.width;
+                    var height = ship.style.height;
+                    ship.style.height = width;
+                    ship.style.width = height;
+                    var shipInArray = ships.filter(s => s.name === event.target.id)[0];
+                    shipInArray.isOnXAxis = false;
+                }
                 
-        };
+            };
 
-        function evaluateDrop(ship, cell) {
-            //var position = cell.id.split('-');
-            //var size = (getIntWidth(ship) / SIZE) - 1;
+            function evaluateDrop(ship, cell) {
+                //var position = cell.id.split('-');
+                //var size = (getIntWidth(ship) / SIZE) - 1;
 
-            //var analyzeXAxis = document.getElementById((parseInt(position[0] + size) + '-' + position[1]));
-            //var analyzeYAxis = document.getElementById(position[0] + '-' + (parseInt(position[1] + size)));
+                //var analyzeXAxis = document.getElementById((parseInt(position[0] + size) + '-' + position[1]));
+                //var analyzeYAxis = document.getElementById(position[0] + '-' + (parseInt(position[1] + size)));
 
-            //if (analyzeXAxis && analyzeYAxis)
-            //    return true;
-            //else
-            //    return false;
+                //if (analyzeXAxis && analyzeYAxis)
+                //    return true;
+                //else
+                //    return false;
 
-            var position = cell.id.split('-');
-            var size = (getIntWidth(ship) / SIZE) - 1;
+                var position = cell.id.split('-');
+                var size = (getIntWidth(ship) / SIZE) - 1;
 
-            var analyzeXAxis = document.getElementById((parseInt(position[1]) + size) + '-' + position[0]);
-            var analyzeYAxis = document.getElementById(position[1] + '-' + (parseInt(position[0]) + size));
-            if ((ship.style.width > ship.style.height || ship.style.height == "") && analyzeXAxis) {
-                return true;
-            } else if ((ship.style.height > ship.style.width || ship.style.width == "") && analyzeYAxis) {
-                return true;
+                var analyzeXAxis = document.getElementById((parseInt(position[1]) + size) + '-' + position[0]);
+                var analyzeYAxis = document.getElementById(position[1] + '-' + (parseInt(position[0]) + size));
+                if ((ship.style.width > ship.style.height || ship.style.height == "") && analyzeXAxis) {
+                    return true;
+                } else if ((ship.style.height > ship.style.width || ship.style.width == "") && analyzeYAxis) {
+                    return true;
+                }
+
+                return false;
+            };
+
+            function fire() {
+                //TODO add call to sendHitToServer
+                var cell = document.getElementById(event.target.id);
+            };
+
+            function receiveHitResponse(coordinates, wasHit, hasGameEnded) {
+                //draw();
+                endTurn();
+            };
+
+            function sendHitToServer(coordinates) {
+                game.server.hit(coordinates);
             }
 
-            return false;
-        };
+            function beginTurn() {
+                $("#waiter").css("visibility", "hidden");
+                $("#statusModal").text("Its your turn now!!");
+                $('#notificationModal').modal('show');
+            }
 
-        function fire() {
-            //TODO add call to sendHitToServer
-            var cell = document.getElementById(event.target.id);
-        };
-
-        function receiveHitResponse(coordinates, wasHit, hasGameEnded) {
-            //draw();
-            endTurn();
-        };
-
-        function sendHitToServer(coordinates) {
-            game.server.hit(coordinates);
-        }
-
-        function beginTurn() {
-            $("#waiter").css("visibility", "hidden");
-            $("#statusModal").text("Its your turn now!!");
-            $('#notificationModal').modal('show');
-        }
-
-        function endTurn() {
-            game.server.endTurn();
-        }
+            function endTurn() {
+                game.server.endTurn();
+            }
         </script>
     }
 </div>
