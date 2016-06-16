@@ -287,7 +287,12 @@
             container.style.top = topPosition + 'px';
             container.style.left = leftPosition + 'px';
             container.style.width = size * SIZE + 'px';
+            let image = '@Url.Content("~/Content/Images/ship.png")';
 
+            container.style.backgroundImage = "url('" + image + "')";
+
+           
+            container.style.backgroundSize = (size * SIZE) + "px" + " 40px ";
             container.draggable = true;
             container.style.zIndex = 1;
             DOCKS.appendChild(container);
@@ -303,11 +308,12 @@
             if (validateRotation(ship)) {
                 var shipInArray = ships.filter(s => s.name === event.target.id)[0];
                 shipInArray.isOnXAxis = !shipInArray.isOnXAxis;
-                var height = ship.style.height;
+                var height = ship.style.height == "" ? "40px" : ship.style.height;
                 var width = ship.style.width;
 
                 ship.style.height = width;
                 ship.style.width = height;
+                ship.style.backgroundSize = height + "px " + width + "px";
             }
             else {
                 $('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
@@ -385,11 +391,14 @@
                 shipOnArray.position.XPosition = cell.id.split('-')[1];
                 shipOnArray.position.YPosition = cell.id.split('-')[0];
 
-                ship.style.background = 'orange';
-
+                //ship.style.background = 'orange';
+                let image ='@Url.Content("~/Content/Images/ship.png")';
+                
+                ship.style.backgroundImage = "url('" + image + "')";
+                
                 var shipHeight = getIntHeight(ship);
                 var shipWidth = getIntWidth(ship);
-
+                ship.style.backgroundSize = shipWidth + "px " + shipHeight + "px";
                 if (ship.style.width > ship.style.height) {
                     var cellsRemaining = (shipWidth / SIZE) - 1;
                     var origin = cell.id.split('-');
@@ -535,13 +544,20 @@
         function receiveHitResponse(coordinates, isMyHit, wasHit, hasGameEnded) {
             var color;
             if (isMyHit) {  //Dibujar respuesta al tiro que hizo el jugador
+                let image = wasHit ?  '@Url.Content("~/Content/Images/1466050855_Explosion.png")' : '@Url.Content("~/Content/Images/1466050417_ksplash.png")';
                 color = wasHit ? "Green" : "Red";
-                document.getElementById(coordinates.YPosition + '-' + coordinates.XPosition + ' f').style.backgroundColor = color;
+                document.getElementById(coordinates.YPosition + '-' + coordinates.XPosition + ' f').style.backgroundImage = "url('" + image + "')";
+                document.getElementById(coordinates.YPosition + '-' + coordinates.XPosition + ' f').style.backgroundSize = "40px 40px";
             } else { //Dibujar tiro del enemigo
                 color = wasHit ? "Red" : "Green";
+                let image = wasHit ? '@Url.Content("~/Content/Images/1466050855_Explosion.png")' : '@Url.Content("~/Content/Images/1466050417_ksplash.png")';
                 var fill = document.createElement('div');
-                fill.style.backgroundColor = color;
+                //fill.style.backgroundColor = color;
+                fill.style.backgroundSize = "40px 40px";
+                fill.style.backgroundImage = "url('" + image + "')";
                 fill.style.zIndex = 2;
+                fill.style.top = "0px;";
+                fill.style.left = "0px;";
                 fill.className = "cell normal";
                 document.getElementById(coordinates.YPosition + '-' + coordinates.XPosition).appendChild(fill);
             }
@@ -549,11 +565,11 @@
                 if (isMyHit) {  //Gano
                     $("#statusModal").text("You win!!! Congratulations!!");
                     $('#notificationModalContent').css("background-Color", "Green");
-                   
+
                 } else {  //Perdio
                     $("#statusModal").text("You lost!!!");
                     $('#notificationModalContent').css("background-Color", "Red");
-                  
+
                 }
                 $('#notificationModal').modal('show');
                 $('#btnPlayAgain').show();
