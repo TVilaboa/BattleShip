@@ -145,6 +145,7 @@
         }
 
         function startGame() {
+            $("#actions").css("visibility", "hidden");
             GAMEBOARD.style.opacity = 0.5;
             GAMEBOARD.parentElement.className = 'col-md-6';
             var docks = document.getElementById('docks');
@@ -155,6 +156,15 @@
             buildFireBoard();
         }
 
+        function setShips(ships) {
+            ships.forEach(function(element) {
+                const ship = document.getElementById(element.Name);
+                const cell = document.getElementById(element.Position.YPosition + '-' + element.Position.XPosition);
+                setShip(ship, cell);
+            });
+         
+        }
+
         $(function() {
 
             // Reference the auto-generated proxy for the hub.
@@ -163,10 +173,13 @@
             game.client.createGame = createGame;
             // Create a function that the hub can call back to display messages.
             game.client.addNewMessageToPage = addNewMessageToPage;
-
             game.client.receiveHitResponse = receiveHitResponse;
             game.client.beginTurn = beginTurn;
             game.client.startGame = startGame;
+            game.client.renderHit = renderHit;
+            game.client.buildBoard = buildBoard;
+            game.client.buildFireBoard = buildFireBoard;
+            game.client.setShips = setShips;
             // Get the user name and store it to prepend to messages.
             $('#displayname').val('@User.Identity.GetUserName()');
             // Set initial focus to message input box.
@@ -372,42 +385,16 @@
         };
 
         function drop(event) {
-            //var ship = document.getElementById(event.dataTransfer.getData("text/plain"));
-            //var cell = document.getElementById(event.target.id);
+            
+            const ship = document.getElementById(event.dataTransfer.getData("text/plain"));
+            const cell = document.getElementById(event.target.id);
+            setShip(ship, cell);
 
-            //cell.className = 'cell normal';
+            event.preventDefault();
+            return false;
+        };
 
-            //if (evaluateDrop(ship, cell)) {
-            //    var shipOnArray = ships.filter(s => s.name === ship.id)[0];
-
-            //    shipOnArray.position.XPosition = cell.id.split('-')[1];
-            //    shipOnArray.position.YPosition = cell.id.split('-')[0];
-
-            //    ship.style.background = 'orange';
-
-            //    var shipHeight = getIntHeight(ship);
-            //    var shipWidth = getIntWidth(ship);
-
-            //    $('#' + ship.id).off('click').on('click', rotate);
-            //    ship.style.top = 0;
-            //    ship.style.left = 0;
-            //    cell.appendChild(ship);
-
-            //    handleShipPositioning(ship, ship.parentElement);
-
-            //    shipOnArray.hasBeenSet = true;
-
-            //}
-            //else {
-            //    $('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
-            //    $('#notificationModal').modal('show');
-            //}
-
-            //event.preventDefault();
-            //return false;
-
-            var ship = document.getElementById(event.dataTransfer.getData("text/plain"));
-            var cell = document.getElementById(event.target.id);
+        function setShip(ship, cell) {
 
             cell.className = 'cell normal';
 
@@ -453,10 +440,7 @@
                 $('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
                 $('#notificationModal').modal('show');
             }
-
-            event.preventDefault();
-            return false;
-        };
+        }
 
         function getIntHeight(ship) {
             if (ship.style.height == '')
@@ -568,22 +552,7 @@
             $('#sinkEnemyDestroyerSound').trigger('play');
         }
 
-        function receiveHitResponse(coordinates, isMyHit, wasHit, hasGameEnded, isShipSunken) {
-            var color;
-            var image;
-            if (wasHit) {
-                image = '@Url.Content("~/Content/Images/1466050855_Explosion.png")';
-                $('#explosionSound').trigger('play');
-                if (isMyHit && isShipSunken) {
-                    $("#statusModal").text("You sunk and enemy ship!!");
-                    $('#notificationModal').modal('show');
-                    setTimeout(sunkShip, 1000);
-                    
-                }
-            } else {
-                image = '@Url.Content("~/Content/Images/1466050417_ksplash.png")';
-                $('#waterSound').trigger('play');
-            }
+        function renderHit(coordinates,isMyHit,image) {
             if (isMyHit) { //Dibujar respuesta al tiro que hizo el jugador
 
                 document.getElementById(coordinates.YPosition + '-' + coordinates.XPosition + ' f')
@@ -607,6 +576,25 @@
                 fill.className = "cell normal";
                 document.getElementById(coordinates.YPosition + '-' + coordinates.XPosition).appendChild(fill);
             }
+        }
+
+        function receiveHitResponse(coordinates, isMyHit, wasHit, hasGameEnded, isShipSunken) {
+            var color;
+            var image;
+            if (wasHit) {
+                image = '@Url.Content("~/Content/Images/1466050855_Explosion.png")';
+                $('#explosionSound').trigger('play');
+                if (isMyHit && isShipSunken) {
+                    $("#statusModal").text("You sunk and enemy ship!!");
+                    $('#notificationModal').modal('show');
+                    setTimeout(sunkShip, 1000);
+                    
+                }
+            } else {
+                image = '@Url.Content("~/Content/Images/1466050417_ksplash.png")';
+                $('#waterSound').trigger('play');
+            }
+            renderHit(coordinates, isMyHit,image);
             if (hasGameEnded) {
                 if (isMyHit) { //Gano
                     $("#statusModal").text("You win!!! Congratulations!!");

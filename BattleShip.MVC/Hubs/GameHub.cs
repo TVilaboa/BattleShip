@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Mvc;
 using System.Web.Providers.Entities;
 using BattleShip.Data.DataBase;
 using BattleShip.Domain;
@@ -165,6 +166,12 @@ namespace BattleShip.MVC.Hubs
             if (existentPlayRoom != null)
             {
                 Clients.Caller.wait("Reconnecting...");
+                var player = existentPlayRoom.Player1.UserName == name
+                    ? existentPlayRoom.Player1 : existentPlayRoom.Player2;
+                var enemy = existentPlayRoom.Player1.UserName != name
+                    ? existentPlayRoom.Player1 : existentPlayRoom.Player2;
+                player.ConnectionId = Context.ConnectionId;
+                RebuildGame(player,enemy);
             }
             else
             {
@@ -197,7 +204,43 @@ namespace BattleShip.MVC.Hubs
             }
           
         }
-      
+
+        private void RebuildGame(User player,User enemy)
+        {
+            if (player.Stage == User.GameStage.SettingShips)
+            {
+                Clients.Caller.createGame();
+            }
+            else
+            {
+                Clients.Caller.createGame();
+                Clients.Caller.setShips(player.Map.Ships);
+                Clients.Caller.startGame();
+               
+                foreach (var hit in player.Map.Hits)
+                {
+                    var imageName = hit.HasHit ? "1466050855_Explosion.png" : "1466050417_ksplash.png";
+                    var image = UrlHelper.GenerateContentUrl($"~/Content/Images/{imageName}",Context.Request.GetHttpContext());
+                    Clients.Caller.renderHit(hit.HitPosition, false, image);
+                }
+                foreach (var hit in enemy.Map.Hits)
+                {
+                    var imageName = hit.HasHit ? "1466050855_Explosion.png" : "1466050417_ksplash.png";
+                    var image = UrlHelper.GenerateContentUrl($"~/Content/Images/{imageName}", Context.Request.GetHttpContext());
+                    Clients.Caller.renderHit(hit.HitPosition, true, image);
+                }
+                if (player.Stage == User.GameStage.WaitingForOponentPlay)
+                {
+                    Clients.Caller.wait("Waiting for opponent to fire...");
+                }else if (player.Stage == User.GameStage.Firing)
+                {
+                    Clients.Caller.beginTurn();
+                }
+            }
+            
+
+        }
+
         public override Task OnDisconnected(bool stopCalled)
         {
             if (BattleShipDataContext.GetInstance != null)
