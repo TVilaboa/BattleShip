@@ -252,6 +252,9 @@
     <Content Include="Content\Images\ship.png" />
     <Content Include="Content\Images\spin.gif" />
     <Content Include="Content\NoMoreTables.css" />
+    <Content Include="Content\Sounds\Big Explosion Effect Video Mp4 HD Sound.mp3" />
+    <Content Include="Content\Sounds\Water Splash Sound FX 1.mp3" />
+    <Content Include="Content\Sounds\We Sunk an Enemy Destroyer.mp3" />
     <Content Include="favicon.ico" />
     <Content Include="Files\ElmahSps\ElmahGetError.sql" />
     <Content Include="Files\ElmahSps\ElmahGetErrorsXML.sql" />

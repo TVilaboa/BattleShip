@@ -14,19 +14,22 @@ namespace BattleShip.Domain
 
         public List<PlayRoom> PlayRooms { get; set; } = new List<PlayRoom>();
 
-        public bool WasHit(User user, Position position)
+        public bool WasHit(User user, Position position,out bool isShipSunken)
         {
+            isShipSunken = false;
             var comprarer = Position.YPositionXPositionComparer;
             var hittenShip = user.Map.Ships.Find(s => s.AllPositions.Any(p => comprarer.Equals(p, position)));
             if (hittenShip != null)
             {
                 hittenShip.Hit();
+                if (hittenShip.Lifes == 0) isShipSunken = true;
+              
                 return true;
                 
             }
             else
             {
-                return false;
+               return false;
             }
            /* return  hittenShip;*///TODO revisar por el resto de las coordinadas del barco
         }
