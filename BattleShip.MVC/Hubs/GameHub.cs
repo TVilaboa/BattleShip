@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Mvc;
 using System.Web.Providers.Entities;
 using BattleShip.Data.DataBase;
 using BattleShip.Domain;
@@ -26,8 +27,12 @@ namespace BattleShip.MVC.Hubs
                    p =>
                        p.Player1.ConnectionId == Context.ConnectionId || p.Player2.ConnectionId == Context.ConnectionId);
             // Call the addNewMessageToPage method to update clients.
-            Clients.Client(playRoom.Player1.ConnectionId).addNewMessageToPage(name, message);
-            Clients.Client(playRoom.Player2.ConnectionId).addNewMessageToPage(name, message);
+            if (playRoom?.Player1 != null && playRoom.Player2 != null)
+            {
+                Clients.Client(playRoom.Player1.ConnectionId).addNewMessageToPage(name, message);
+                Clients.Client(playRoom.Player2.ConnectionId).addNewMessageToPage(name, message);
+            } 
+          
             //Clients.All.addNewMessageToPage(name, message);
         }
 
@@ -82,7 +87,8 @@ namespace BattleShip.MVC.Hubs
             var hitterPlayer = playRoom.Player1.ConnectionId == Context.ConnectionId ? playRoom.Player1 : playRoom.Player2;
             if (hitterPlayer.Stage == User.GameStage.Firing && Engine.CanHitPosition(hittedPlayer,position))
             {
-                var wasHit = Engine.WasHit(hittedPlayer, position);
+                bool isShipSunken;
+                var wasHit = Engine.WasHit(hittedPlayer, position,out isShipSunken);
                 hittedPlayer.Map.Hits.Add(new Hit { HasHit = wasHit, HitPosition = position });
 
                 var hasGameEnded = Engine.HasGameEnded(hittedPlayer);
@@ -114,10 +120,16 @@ namespace BattleShip.MVC.Hubs
                     dbHittedPlayer.Stage = User.GameStage.NotPlaying;
                     new UserService().Update(dbHitterPlayer);
                     new UserService().Update(dbHittedPlayer);
+                    Engine.PlayRooms.RemoveAll(
+                        p =>
+                            (p.Player1.UserName == dbHitterPlayer.UserName ||
+                             p.Player2.UserName == dbHitterPlayer.UserName) &&
+                            (p.Player1.UserName == dbHittedPlayer.UserName ||
+                             p.Player2.UserName == dbHittedPlayer.UserName));
                 }
 
-                Clients.Caller.receiveHitResponse(position,true, wasHit, hasGameEnded);
-                Clients.Client(hittedPlayer.ConnectionId).receiveHitResponse(position, false, wasHit, hasGameEnded);
+                Clients.Caller.receiveHitResponse(position,true, wasHit, hasGameEnded,isShipSunken);
+                Clients.Client(hittedPlayer.ConnectionId).receiveHitResponse(position, false, wasHit, hasGameEnded, isShipSunken);
             }
         }
 
@@ -150,63 +162,85 @@ namespace BattleShip.MVC.Hubs
             // 7: Notify the group the match can start
             var name = Context.User.Identity.Name;
             var user = new UserService().Find(u => u.UserName == name);
-            user.ConnectionId = Context.ConnectionId;
-            user.Stage = User.GameStage.WaitingForOponent;
-            new UserService().AddOrUpdate(user);
-            if (!Engine.WaitingList.Any())
+            var existentPlayRoom = Engine.PlayRooms.Find(p => p.Player1.UserName == name || p.Player2.UserName == name);
+            if (existentPlayRoom != null)
             {
-                Engine.WaitingList.Add(user);
-                Clients.Caller.wait();
+                Clients.Caller.wait("Reconnecting...");
+                var player = existentPlayRoom.Player1.UserName == name
+                    ? existentPlayRoom.Player1 : existentPlayRoom.Player2;
+                var enemy = existentPlayRoom.Player1.UserName != name
+                    ? existentPlayRoom.Player1 : existentPlayRoom.Player2;
+                player.ConnectionId = Context.ConnectionId;
+                RebuildGame(player,enemy);
             }
             else
             {
-                var opponent = Engine.WaitingList.First();
-                Engine.WaitingList.Clear();
-                user.Stage = User.GameStage.SettingShips;
-                opponent.Stage= User.GameStage.SettingShips;
-                var playRoom = new PlayRoom
-                               {
-                                   Guid = Guid.NewGuid().ToString(),
-                                   Player1 = opponent,
-                                   Player2 = user
-                               };
-                Engine.PlayRooms.Add(playRoom);
-                //_roomRepository.Add(playRoom);
-                //var t1 = Groups.Add(opponent.ConnectionId, playRoom.Guid);
-                //var t2 = Groups.Add(user.ConnectionId, playRoom.Guid);
-
-                //t1.Wait();
-                //t2.Wait();
-
-                //// Rough solution. We have to be sure the clients have received the group add messages over the wire
-                //// TODO: ask maybe on Jabbr or on StackOverflow and think about a better solution
-                //Thread.Sleep(3000);
-
-                //Player player1 = Engine.CreatePlayer(playRoom.Player1, 1, true);
-                //Player player2 = Engine.CreatePlayer(playRoom.Player2, 2, false);
-
-                //Game game = Engine.CreateGame(playRoom.Id, player1, player2);
-
-                //dynamic matchOptions = new ExpandoObject();
-                //matchOptions.PlayRoomId = playRoom.Id;
-                //matchOptions.Player1 = playRoom.Player1;
-                //matchOptions.Player2 = playRoom.Player2;
-                //matchOptions.BallDirection = game.Ball.Direction;
-
-                //Clients[playRoom.Id].setupMatch(matchOptions);
-
-                //Thread.Sleep(3000);
-                ////Engine.AddGame(game);
-                //dynamic @group = Clients.Group(playRoom.Guid);
-                //@group.createGame();
-                //@group.addNewMessageToPage("Server", "Ready");
-                Clients.Client(playRoom.Player1.ConnectionId).createGame();
-                Clients.Client(playRoom.Player2.ConnectionId).createGame();
-                Clients.Client(playRoom.Player1.ConnectionId).addNewMessageToPage("Server", "Ready");
-                Clients.Client(playRoom.Player2.ConnectionId).addNewMessageToPage("Server", "Ready");
+                user.ConnectionId = Context.ConnectionId;
+                user.Stage = User.GameStage.WaitingForOponent;
+                new UserService().AddOrUpdate(user);
+                if (!Engine.WaitingList.Any())
+                {
+                    Engine.WaitingList.Add(user);
+                    Clients.Caller.wait();
+                }
+                else
+                {
+                    var opponent = Engine.WaitingList.First();
+                    Engine.WaitingList.Clear();
+                    user.Stage = User.GameStage.SettingShips;
+                    opponent.Stage = User.GameStage.SettingShips;
+                    var playRoom = new PlayRoom
+                    {
+                        Guid = Guid.NewGuid().ToString(),
+                        Player1 = opponent,
+                        Player2 = user
+                    };
+                    Engine.PlayRooms.Add(playRoom);
+                    Clients.Client(playRoom.Player1.ConnectionId).createGame();
+                    Clients.Client(playRoom.Player2.ConnectionId).createGame();
+                    Clients.Client(playRoom.Player1.ConnectionId).addNewMessageToPage("Server", "Ready");
+                    Clients.Client(playRoom.Player2.ConnectionId).addNewMessageToPage("Server", "Ready");
+                }
             }
+          
         }
-      
+
+        private void RebuildGame(User player,User enemy)
+        {
+            if (player.Stage == User.GameStage.SettingShips)
+            {
+                Clients.Caller.createGame();
+            }
+            else
+            {
+                Clients.Caller.createGame();
+                Clients.Caller.setShips(player.Map.Ships);
+                Clients.Caller.startGame();
+               
+                foreach (var hit in player.Map.Hits)
+                {
+                    var imageName = hit.HasHit ? "1466050855_Explosion.png" : "1466050417_ksplash.png";
+                    var image = UrlHelper.GenerateContentUrl($"~/Content/Images/{imageName}",Context.Request.GetHttpContext());
+                    Clients.Caller.renderHit(hit.HitPosition, false, image);
+                }
+                foreach (var hit in enemy.Map.Hits)
+                {
+                    var imageName = hit.HasHit ? "1466050855_Explosion.png" : "1466050417_ksplash.png";
+                    var image = UrlHelper.GenerateContentUrl($"~/Content/Images/{imageName}", Context.Request.GetHttpContext());
+                    Clients.Caller.renderHit(hit.HitPosition, true, image);
+                }
+                if (player.Stage == User.GameStage.WaitingForOponentPlay)
+                {
+                    Clients.Caller.wait("Waiting for opponent to fire...");
+                }else if (player.Stage == User.GameStage.Firing)
+                {
+                    Clients.Caller.beginTurn();
+                }
+            }
+            
+
+        }
+
         public override Task OnDisconnected(bool stopCalled)
         {
             if (BattleShipDataContext.GetInstance != null)
