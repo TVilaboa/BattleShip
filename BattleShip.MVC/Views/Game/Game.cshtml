@@ -23,7 +23,8 @@
 
 <link rel="stylesheet" href="~/Content/BattleShip.css" />
 <link rel="stylesheet" href="~/Content/board2.css" />
-
+<link href="~/Content/pnotify.custom.min.css" rel="stylesheet" />
+<link href="~/Content/animate.css" rel="stylesheet" />
 <audio  preload="auto" id="waterSound">
     <source src="~/Content/Sounds/Water%20Splash%20Sound%20FX%201.mp3" type="audio/mpeg" />
 </audio>
@@ -81,6 +82,7 @@
 </div>
 
 @section scripts {
+<script src="~/Scripts/pnotify.custom.min.js"></script>
     <!--Script references. -->
     <!--The jQuery library is required and is referenced by default in _Layout.cshtml. -->
     <!--Reference the SignalR library. -->
@@ -96,11 +98,14 @@
                         if (e.keyCode == 13)
                             $('#sendmessage').click();
                     });
+                PNotify.desktop.permission();
+              
+               
+                
+                
+                
             });
 
-    </script>
-
-    <script>
 
         var BOARD_INDEX = 10;
         var SIZE = 40;
@@ -108,6 +113,24 @@
         var ships = [];
         var GAMEBOARD = document.getElementById('gameboard');
         var DOCKS = document.getElementById('docks');
+
+        function showNotification(text) {
+            (new PNotify({
+                title: 'Notification',
+                text: text,
+                after_init: function (notice) {
+                    notice.attention('rubberBand');
+                },
+                addclass: "stack-modal",
+                desktop: {
+                    desktop: document.hidden,
+                    icon: '@Url.Content("~/Content/Images/Sea-ship-war-planes_1600x1200.jpg")'
+                }
+            })).get().click(function (e) {
+                if ($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target))
+                    return;
+            });
+        }
 
         function Ship(lifes, name) {
             this.lifes = lifes;
@@ -138,8 +161,9 @@
                 game.server.setMap(ships);
                 $("#btnSetShips").hide();
             } else {
-                $('#statusModal').text("You must set all ships...");
-                $('#notificationModal').modal('show');
+                showNotification("You must set all ships...");
+                //$('#statusModal').text("You must set all ships...");
+                //$('#notificationModal').modal('show');
             }
 
         }
@@ -228,6 +252,10 @@
 
             buildBoard();
             loadShips();
+           
+            var text = "Set your ships!!";
+
+            showNotification(text);
         };
 
         function addNewMessageToPage(name, message) {
@@ -355,8 +383,9 @@
                 ship.style.width = height;
                 ship.style.backgroundSize = height + "px " + width + "px";
             } else {
-                $('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
-                $('#notificationModal').modal('show');
+                showNotification("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
+                //$('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
+                //$('#notificationModal').modal('show');
             }
         };
 
@@ -437,8 +466,9 @@
                 shipOnArray.hasBeenSet = true;
 
             } else {
-                $('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
-                $('#notificationModal').modal('show');
+                showNotification("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
+                //$('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
+                //$('#notificationModal').modal('show');
             }
         }
 
@@ -585,8 +615,9 @@
                 image = '@Url.Content("~/Content/Images/1466050855_Explosion.png")';
                 $('#explosionSound').trigger('play');
                 if (isMyHit && isShipSunken) {
-                    $("#statusModal").text("You sunk and enemy ship!!");
-                    $('#notificationModal').modal('show');
+                    showNotification("You sunk and enemy ship!!");
+                    //$("#statusModal").text("You sunk and enemy ship!!");
+                    //$('#notificationModal').modal('show');
                     setTimeout(sunkShip, 1000);
                     
                 }
@@ -618,8 +649,9 @@
 
         function beginTurn() {
             $("#waiter").css("visibility", "hidden");
-            $("#statusModal").text("Its your turn now!!");
-            $('#notificationModal').modal('show');
+            //$("#statusModal").text("Its your turn now!!");
+            //$('#notificationModal').modal('show');
+            showNotification("Its your turn now!!");
         }
 
         function endTurn() {
