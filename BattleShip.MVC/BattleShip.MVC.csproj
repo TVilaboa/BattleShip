@@ -238,6 +238,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\animate.css" />
     <Content Include="Content\BattleShip.css" />
     <Content Include="Content\board2.css" />
     <Content Include="Content\board.css" />
@@ -248,10 +249,13 @@
     <Content Include="Content\Images\1466050417_ksplash.png" />
     <Content Include="Content\Images\1466050855_Explosion.png" />
     <Content Include="Content\Images\board.jpg" />
+    <Content Include="Content\Images\keep-calm-it-s-your-turn-now-11.png" />
     <Content Include="Content\Images\miss.png" />
+    <Content Include="Content\Images\Sea-ship-war-planes_1600x1200.jpg" />
     <Content Include="Content\Images\ship.png" />
     <Content Include="Content\Images\spin.gif" />
     <Content Include="Content\NoMoreTables.css" />
+    <Content Include="Content\pnotify.custom.min.css" />
     <Content Include="Content\Sounds\Big Explosion Effect Video Mp4 HD Sound.mp3" />
     <Content Include="Content\Sounds\Water Splash Sound FX 1.mp3" />
     <Content Include="Content\Sounds\We Sunk an Enemy Destroyer.mp3" />
@@ -277,9 +281,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Content Include="Scripts\game\game.js" />
+    <Content Include="Scripts\game\tsconfig.json" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\board.js" />
-    <Content Include="Scripts\board2.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\d3.js" />
@@ -299,6 +303,7 @@
     <Content Include="Scripts\linq.js" />
     <Content Include="Scripts\linq.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\pnotify.custom.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
@@ -363,6 +368,8 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\Data.ts" />
+    <TypeScriptCompile Include="Scripts\game\battleship.ts" />
+    <TypeScriptCompile Include="Scripts\game\helloWorld.ts" />
     <TypeScriptCompile Include="Scripts\linq.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\d3\d3.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
