@@ -121,6 +121,28 @@ class Game {
         this.DOCKS = document.getElementById('docks');
         //game : Game;
         this.ships = new Array();
+        //Event Handlers defined
+        this.rotate = (event) => {
+            event.preventDefault();
+            var ship = document.getElementById(event.target.id);
+            if (this.validateRotation(ship)) {
+                var shipInArray = this.ships.filter(s => s.getName() === event.target.id)[0];
+                shipInArray.setIsOnXAxis(!shipInArray.getIsOnXAxis());
+                var height = ship.style.height == "" ? "40px" : ship.style.height;
+                var width = ship.style.width;
+                ship.style.height = width;
+                ship.style.width = height;
+                ship.style.backgroundSize = ship.style.width + " " + ship.style.height;
+                let horizontal = '/Content/Images/ship.png';
+                let vertical = '/Content/Images/ship_vertical.png';
+                if (this.getIntHeight(ship) > this.getIntWidth(ship))
+                    ship.style.backgroundImage = "url('" + vertical + "')";
+                else
+                    ship.style.backgroundImage = "url('" + horizontal + "')";
+            }
+            else {
+            }
+        };
         this.drag_start = (event) => {
             var style = window.getComputedStyle(event.target, null);
             event.originalEvent.dataTransfer.setData("text/plain", event.target.id);
@@ -131,6 +153,29 @@ class Game {
             this.setShip(ship, cell);
             event.preventDefault();
             return false;
+        };
+        //Validation functions
+        this.validateRotation = (ship) => {
+            var result;
+            var cell = ship.parentElement;
+            var projectedHeight = this.getIntWidth(ship);
+            var projectedWidth = this.getIntHeight(ship);
+            var exists;
+            if (projectedHeight > projectedWidth) {
+                var size = (projectedHeight / this.SIZE) - 1;
+                var validString = cell.id.split('-')[0];
+                exists = (parseInt(validString) + size) + '-' + cell.id.split('-')[1];
+            }
+            else {
+                var size = (projectedWidth / this.SIZE) - 1;
+                var validString = cell.id.split('-')[1];
+                exists = cell.id.split('-')[0] + '-' + (parseInt(validString) + size);
+            }
+            if (document.getElementById(exists))
+                result = true;
+            else
+                result = false;
+            return result;
         };
         this.createGame();
         //Game = this;
@@ -150,13 +195,13 @@ class Game {
             var shipOnArray = this.ships.filter(s => s.getName() === ship.id)[0];
             shipOnArray.getPosition().setXPosition(parseInt(cell.id.split('-')[1]));
             shipOnArray.getPosition().setYPosition(parseInt(cell.id.split('-')[0]));
-            //ship.style.background = 'orange';
-            let image = '/Content/Images/ship.png';
-            ship.style.backgroundImage = "url('" + image + "')";
+            let horizontal = '/Content/Images/ship.png';
+            let vertical = '/Content/Images/ship_vertical.png';
             var shipHeight = this.getIntHeight(ship);
             var shipWidth = this.getIntWidth(ship);
             ship.style.backgroundSize = shipWidth + "px " + shipHeight + "px";
             if (ship.style.width > ship.style.height) {
+                ship.style.backgroundImage = "url('" + horizontal + "')";
                 var cellsRemaining = (shipWidth / this.SIZE) - 1;
                 var origin = cell.id.split('-');
                 for (var i = 1; i <= cellsRemaining; i++) {
@@ -164,18 +209,20 @@ class Game {
                 }
             }
             else {
+                ship.style.backgroundImage = "url('" + vertical + "')";
                 var cellsRemaining = (shipHeight / this.SIZE) - 1;
                 var origin = cell.id.split('-');
                 for (i = 1; i <= cellsRemaining; i++) {
                     let cellI = document.getElementById((parseInt(origin[0]) + i) + '-' + origin[1]);
                 }
             }
-            $('#' + ship.id).off('click').on('click', this.rotate);
+            ship.style.backgroundRepeat = 'no-repeat';
             ship.style.top = '0';
             ship.style.left = '0';
             cell.appendChild(ship);
             this.handleShipPositioning(ship, ship.parentElement);
             shipOnArray.setHasBeenSet(true);
+            $('#' + ship.id).off('click').on('click', this.rotate);
         }
         else {
         }
@@ -240,22 +287,6 @@ class Game {
         this.DOCKS.appendChild(ship.getElement());
         $('#' + ship.getElement().id).on('dragstart', this.drag_start);
     }
-    //Event Handlers defined
-    rotate(event) {
-        event.preventDefault();
-        var ship = document.getElementById(event.target.id);
-        if (this.validateRotation(ship)) {
-            var shipInArray = this.ships.filter(s => s.getName() === event.target.id)[0];
-            shipInArray.setIsOnXAxis(!shipInArray.getIsOnXAxis());
-            var height = ship.style.height == "" ? "40px" : ship.style.height;
-            var width = ship.style.width;
-            ship.style.height = width;
-            ship.style.width = height;
-            ship.style.backgroundSize = height + "px " + width + "px";
-        }
-        else {
-        }
-    }
     drag_over(event) {
         event.preventDefault();
         return false;
@@ -271,29 +302,6 @@ class Game {
         var cell = document.getElementById(event.target.id);
         if (cell && cell.style.display != 'none')
             cell.className = 'cell hovered';
-    }
-    //Validation functions
-    validateRotation(ship) {
-        var result;
-        var cell = ship.parentElement;
-        var projectedHeight = this.getIntWidth(ship);
-        var projectedWidth = this.getIntHeight(ship);
-        var exists;
-        if (projectedHeight > projectedWidth) {
-            var size = (projectedHeight / this.SIZE) - 1;
-            var validString = cell.id.split('-')[0];
-            exists = (parseInt(validString) + size) + '-' + cell.id.split('-')[1];
-        }
-        else {
-            var size = (projectedWidth / this.SIZE) - 1;
-            var validString = cell.id.split('-')[1];
-            exists = cell.id.split('-')[0] + '-' + (parseInt(validString) + size);
-        }
-        if (document.getElementById(exists))
-            result = true;
-        else
-            result = false;
-        return result;
     }
     evaluateDrop(ship, cell) {
         var position = cell.id.split('-');
