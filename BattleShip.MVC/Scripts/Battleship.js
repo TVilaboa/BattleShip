@@ -125,6 +125,7 @@ var Game = (function () {
         this.DOCKS = document.getElementById('docks');
         this.ships = new Array();
         this.createGame();
+        this.game = this;
     }
     Game.prototype.setMap = function () {
     };
@@ -216,7 +217,7 @@ var Game = (function () {
     };
     Game.prototype.addToDocks = function (ship) {
         this.ships.push(ship);
-        $('#' + ship.getElement().id).on('dragstart', this.drag_start);
+        $('#' + ship.getElement()).on('dragstart', (this.drag_start));
         this.DOCKS.appendChild(ship.getElement());
     };
     //Event Handlers defined

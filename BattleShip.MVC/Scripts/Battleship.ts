@@ -167,7 +167,7 @@ class Game {
 
     constructor() {
         this.createGame();
-        Game = this;
+        this.game = this;
     }
 
     setMap() {
@@ -289,7 +289,7 @@ class Game {
 
     addToDocks(ship: Ship) {
         this.ships.push(ship);
-        $('#' + ship.getElement().id).on('dragstart', this.drag_start);
+        $('#' + ship.getElement()).on('dragstart', (this.drag_start));
         this.DOCKS.appendChild(ship.getElement());
     }
 
@@ -341,7 +341,7 @@ class Game {
     drop(event) {
         const ship = document.getElementById(event.dataTransfer.getData("text/plain"));
         const cell = document.getElementById(event.target.id);
-        game.setShip(ship, cell);
+        this.setShip(ship, cell);
 
         event.preventDefault();
         return false;

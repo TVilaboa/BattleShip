@@ -1,4 +1,5 @@
-﻿$(document)
+﻿//Chat
+$(document)
             .ready(function() {
                 $('#message')
                     .keypress(function(e) {
@@ -6,14 +7,49 @@
                             $('#sendmessage').click();
                     });
                 PNotify.desktop.permission();
-              
-               
-                
-                
-                
             });
 
+//Load
+$(function () {
 
+    // Reference the auto-generated proxy for the hub.
+    game = $.connection.gameHub;
+    game.client.wait = wait;
+    game.client.createGame = createGame;
+    // Create a function that the hub can call back to display messages.
+    game.client.addNewMessageToPage = addNewMessageToPage;
+    game.client.receiveHitResponse = receiveHitResponse;
+    game.client.beginTurn = beginTurn;
+    game.client.startGame = startGame;
+    game.client.renderHit = renderHit;
+    game.client.buildBoard = buildBoard;
+    game.client.buildFireBoard = buildFireBoard;
+    game.client.setShips = setShips;
+    // Get the user name and store it to prepend to messages.
+    $('#displayname').val('@User.Identity.GetUserName()');
+    // Set initial focus to message input box.
+    $('#message').focus();
+    // Start the connection.
+    $.connection.hub.start()
+        .done(function () {
+            $('#sendmessage')
+                .click(function () {
+                    // Call the Send method on the hub.
+                    game.server.send($('#displayname').val(), $('#message').val());
+                    // Clear text box and reset focus for next comment.
+                    $('#message').val('').focus();
+                });
+            game.server.joined();
+        });
+    $.connection.hub.disconnected(function () {
+        setTimeout(function () {
+            $.connection.hub.start();
+        },
+            2000);
+    });
+});
+
+//Game variables
 var BOARD_INDEX = 10;
 var SIZE = 40;
 var game;
@@ -21,6 +57,23 @@ var ships = [];
 var GAMEBOARD = document.getElementById('gameboard');
 var DOCKS = document.getElementById('docks');
 
+//Ship
+function Ship(lifes, name) {
+    this.lifes = lifes;
+    this.position = new Position();
+    this.isOnXAxis = true;
+    this.name = name;
+    this.hasBeenSet = false;
+    this.Size = lifes;
+}
+
+//Position
+function Position() {
+    this.XPosition = 0;
+    this.YPosition = 0;
+}
+
+//Helpers
 function showNotification(text) {
     (new PNotify({
         title: 'Notification',
@@ -39,20 +92,61 @@ function showNotification(text) {
     });
 }
 
-function Ship(lifes, name) {
-    this.lifes = lifes;
-    this.position = new Position();
-    this.isOnXAxis = true;
-    this.name = name;
-    this.hasBeenSet = false;
-    this.Size = lifes;
+
+// This optional function html-encodes messages for display in the page.
+function htmlEncode(value) {
+    var encodedValue = $('<div />').text(value).html();
+    return encodedValue;
 }
 
-function Position() {
-    this.XPosition = 0;
-    this.YPosition = 0;
+function AddCellTitle(square) {
+    if (i == 0 && j == 0) {
+        square.innerHTML = '<h1 class="left-cell-title"><span>0</span></h1><h1 class="center-cell-title" style="margin-top: -40px !important"><span>0</span></h1>'
+    }
+    else if (i == 0) {
+        square.innerHTML = `
+        <h1 class="left-cell-title">
+            <span>${j}</span></h1>`;
+    } else if (j == 0) {
+        square.innerHTML = `
+        <h1 class="center-cell-title">
+            <span>${i}</span></h1>`;
+    }
 }
 
+function wait(status) {
+    $("#waiter").css("visibility", "visible");
+    if (status == null) {
+        status = "Waiting for an opponent ...";
+    }
+    $("#status").text(status);
+};
+
+function setShips(ships) {
+    ships.forEach(function (element) {
+        const ship = document.getElementById(element.Name);
+        const cell = document.getElementById(element.Position.YPosition + '-' + element.Position.XPosition);
+        setShip(ship, cell);
+    });
+}
+
+function genCellId(j, i) {
+    return '' + j + '-' + i;
+};
+
+function getIntHeight(ship) {
+    if (ship.style.height == '')
+        return 40;
+    return parseInt(ship.style.height.replace('px', ''));
+};
+
+function getIntWidth(ship) {
+    if (ship.style.width == '')
+        return 40;
+    return parseInt(ship.style.width.replace('px', ''));
+};
+
+//Game initialization
 function setMap() {
     if (ships.filter(s => !s.hasBeenSet)[0] == undefined) {
         $('#carrier').off();
@@ -69,11 +163,21 @@ function setMap() {
         $("#btnSetShips").hide();
     } else {
         showNotification("You must set all ships...");
-        //$('#statusModal').text("You must set all ships...");
-        //$('#notificationModal').modal('show');
     }
 
 }
+
+function createGame() {
+    $("#waiter").css("visibility", "hidden");
+    $("#actions").css("visibility", "visible");
+
+    buildBoard();
+    loadShips();
+
+    var text = "Set your ships!!";
+
+    showNotification(text);
+};
 
 function startGame() {
     $("#actions").css("visibility", "hidden");
@@ -83,92 +187,11 @@ function startGame() {
     var parent = docks.parentElement;
     parent.parentElement.removeChild(parent);
     parent.removeChild(docks);
-    //GAMEBOARD
+
     buildFireBoard();
 }
 
-function setShips(ships) {
-    ships.forEach(function(element) {
-        const ship = document.getElementById(element.Name);
-        const cell = document.getElementById(element.Position.YPosition + '-' + element.Position.XPosition);
-        setShip(ship, cell);
-    });
-         
-}
 
-document.addEventListener('DOMContentLoaded', function () {
-
-    createGame();
-});
-
-//$(function() {
-
-//    // Reference the auto-generated proxy for the hub.
-//    game = $.connection.gameHub;
-//    game.client.wait = wait;
-//    game.client.createGame = createGame;
-//    // Create a function that the hub can call back to display messages.
-//    game.client.addNewMessageToPage = addNewMessageToPage;
-//    game.client.receiveHitResponse = receiveHitResponse;
-//    game.client.beginTurn = beginTurn;
-//    game.client.startGame = startGame;
-//    game.client.renderHit = renderHit;
-//    game.client.buildBoard = buildBoard;
-//    game.client.buildFireBoard = buildFireBoard;
-//    game.client.setShips = setShips;
-//    // Get the user name and store it to prepend to messages.
-//    $('#displayname').val('@User.Identity.GetUserName()');
-//    // Set initial focus to message input box.
-//    $('#message').focus();
-//    // Start the connection.
-//    $.connection.hub.start()
-//        .done(function() {
-//            $('#sendmessage')
-//                .click(function() {
-//                    // Call the Send method on the hub.
-//                    game.server.send($('#displayname').val(), $('#message').val());
-//                    // Clear text box and reset focus for next comment.
-//                    $('#message').val('').focus();
-//                });
-//            game.server.joined();
-//        });
-//    $.connection.hub.disconnected(function() {
-//        setTimeout(function() {
-//            $.connection.hub.start();
-//        },
-//            2000);
-//    });
-//});
-
-// This optional function html-encodes messages for display in the page.
-function htmlEncode(value) {
-    var encodedValue = $('<div />').text(value).html();
-    return encodedValue;
-}
-
-function genCellId(j, i) {
-    return '' + j + '-' + i;
-};
-
-function wait(status) {
-    $("#waiter").css("visibility", "visible");
-    if (status == null) {
-        status = "Waiting for an opponent ...";
-    }
-    $("#status").text(status);
-};
-
-function createGame() {
-    $("#waiter").css("visibility", "hidden");
-    $("#actions").css("visibility", "visible");
-
-    buildBoard();
-    loadShips();
-           
-    var text = "Set your ships!!";
-
-    showNotification(text);
-};
 
 function addNewMessageToPage(name, message) {
     // Add the message to the page.
@@ -280,7 +303,7 @@ function buildship(size, container, position) {
 
 };
 
-
+//Event Handlers
 function rotate(event) {
     event.preventDefault();
 
@@ -306,8 +329,6 @@ function rotate(event) {
 
     } else {
         showNotification("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
-        //$('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
-        //$('#notificationModal').modal('show');
     }
 };
 
@@ -355,11 +376,8 @@ function setShip(ship, cell) {
         shipOnArray.position.XPosition = cell.id.split('-')[1];
         shipOnArray.position.YPosition = cell.id.split('-')[0];
 
-        //ship.style.background = 'orange';
         let horizontal = '/Content/Images/ship.png';
         let vertical = '/Content/Images/ship_vertical.png';
-
-
 
         var shipHeight = getIntHeight(ship);
         var shipWidth = getIntWidth(ship);
@@ -393,23 +411,30 @@ function setShip(ship, cell) {
 
     } else {
         showNotification("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
-        //$('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
-        //$('#notificationModal').modal('show');
+
     }
 }
 
-function getIntHeight(ship) {
-    if (ship.style.height == '')
-        return 40;
-    return parseInt(ship.style.height.replace('px', ''));
+function handleShipPositioning(ship, cell) {
+
+    var size = (getIntWidth(ship) / SIZE) - 1;
+
+    var position = cell.id.split('-');
+    var exists = position[0] + '-' + (parseInt(position[1]) + size);
+
+    if (!document.getElementById(exists)) {
+        var width = ship.style.width;
+        var height = ship.style.height;
+        ship.style.height = width;
+        ship.style.width = height;
+        var shipInArray = ships.filter(s => s.name === event.target.id)[0];
+        shipInArray.isOnXAxis = false;
+    }
+
 };
 
-function getIntWidth(ship) {
-    if (ship.style.width == '')
-        return 40;
-    return parseInt(ship.style.width.replace('px', ''));
-};
 
+//Validations
 function validateDrop(ship, cell) {
     var result;
 
@@ -461,23 +486,6 @@ function validateRotation(ship) {
 
 };
 
-function handleShipPositioning(ship, cell) {
-
-    var size = (getIntWidth(ship) / SIZE) - 1;
-
-    var position = cell.id.split('-');
-    var exists = position[0] + '-' + (parseInt(position[1]) + size);
-
-    if (!document.getElementById(exists)) {
-        var width = ship.style.width;
-        var height = ship.style.height;
-        ship.style.height = width;
-        ship.style.width = height;
-        var shipInArray = ships.filter(s => s.name === event.target.id)[0];
-        shipInArray.isOnXAxis = false;
-    }
-
-};
 
 function evaluateDrop(ship, cell) {
     var position = cell.id.split('-');
@@ -494,8 +502,8 @@ function evaluateDrop(ship, cell) {
     return false;
 };
 
+//Playing Mode
 function fire() {
-    //TODO add call to sendHitToServer
     var cell = document.getElementById(event.target.id);
     var position = new Position();
     position.XPosition = cell.id.split('-')[1].split(' ')[0];
@@ -503,8 +511,7 @@ function fire() {
     sendHitToServer(position);
 };
 
-function sunkShip() {
-            
+function sunkShip() {   
     $('#sinkEnemyDestroyerSound').trigger('play');
 }
 
@@ -519,17 +526,16 @@ function renderHit(coordinates,isMyHit,image) {
                 coordinates.XPosition +
                 ' f')
             .style.backgroundSize = "40px 40px";
-    } else { //Dibujar tiro del enemigo
-
+    } else {
 
         var fill = document.createElement('div');
-        //fill.style.backgroundColor = color;
         fill.style.backgroundSize = "40px 40px";
         fill.style.backgroundImage = "url('" + image + "')";
         fill.style.zIndex = 2;
         fill.style.top = "0px;";
         fill.style.left = "0px;";
         fill.className = "cell normal";
+
         document.getElementById(coordinates.YPosition + '-' + coordinates.XPosition).appendChild(fill);
     }
 }
@@ -542,8 +548,6 @@ function receiveHitResponse(coordinates, isMyHit, wasHit, hasGameEnded, isShipSu
         $('#explosionSound').trigger('play');
         if (isMyHit && isShipSunken) {
             showNotification("You sunk and enemy ship!!");
-            //$("#statusModal").text("You sunk and enemy ship!!");
-            //$('#notificationModal').modal('show');
             setTimeout(sunkShip, 1000);
                     
         }
@@ -575,8 +579,6 @@ function sendHitToServer(coordinates) {
 
 function beginTurn() {
     $("#waiter").css("visibility", "hidden");
-    //$("#statusModal").text("Its your turn now!!");
-    //$('#notificationModal').modal('show');
     showNotification("Its your turn now!!");
 }
 
@@ -584,17 +586,3 @@ function endTurn() {
     game.server.endTurn();
 }
 
-function AddCellTitle(square) {
-    if (i == 0 && j == 0) {
-        square.innerHTML = '<h1 class="left-cell-title"><span>0</span></h1><h1 class="center-cell-title" style="margin-top: -40px !important"><span>0</span></h1>'
-    }
-    else if (i == 0) {
-        square.innerHTML = `
-        <h1 class="left-cell-title">
-            <span>${j}</span></h1>`;
-    } else if (j == 0) {
-        square.innerHTML = `
-        <h1 class="center-cell-title">
-            <span>${i}</span></h1>`;
-    }
-}
