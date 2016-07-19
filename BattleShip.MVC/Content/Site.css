@@ -454,3 +454,20 @@ input[type=submit].buscar{/*background:url(images/ico-buscar.png) no-repeat righ
 .center-block {
     float: none !important;
 }
+
+body {
+   
+    background-image: url('Images/Sea-ship-war-planes_1600x1200.jpg');
+    
+}
+
+@media screen and (min-width: 900px) {
+    .jumbotron {
+        -ms-opacity: 0.75;
+        opacity: 0.75;
+    }
+}
+
+.table {
+     background-color: #faebcc;
+}

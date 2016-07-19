@@ -1612,7 +1612,8 @@ pre code {
 
 table {
   max-width: 100%;
-  background-color: transparent;
+  /*background-color: transparent;*/
+   background-color: #faebcc;
 }
 
 th {

@@ -46,4 +46,7 @@
 	Label the data
 	*/
 	.noTable td:before { content: attr(data-title); }
+    .table {
+        background-color: #faebcc;
+    }
 }
