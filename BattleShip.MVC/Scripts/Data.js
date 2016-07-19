@@ -1,38 +1,29 @@
 ///<reference path="typings/d3/d3.d.ts" />
 ///<reference path="typings/linq/linq.d.ts" />
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var Chart;
 (function (Chart) {
-    var Base = (function () {
-        function Base(element) {
+    class Base {
+        constructor(element) {
             this.element = element;
             this.iso8601 = d3.time.format('%Y-%m-%d');
             this.chartWidth = 800;
         }
-        return Base;
-    }());
+    }
     Chart.Base = Base;
-    var Bar = (function (_super) {
-        __extends(Bar, _super);
-        function Bar(element) {
-            _super.call(this, element);
+    class Bar extends Base {
+        constructor(element) {
+            super(element);
             this.element = element;
         }
-        return Bar;
-    }(Base));
+    }
     Chart.Bar = Bar;
-    var BubbleChart = (function (_super) {
-        __extends(BubbleChart, _super);
-        function BubbleChart(element) {
-            _super.call(this, element);
+    class BubbleChart extends Base {
+        constructor(element) {
+            super(element);
             this.element = element;
         }
-        BubbleChart.prototype.render = function (data) {
+        render(data) {
             this.bubbleChartDiameter = 300;
             var diameter = this.bubbleChartDiameter, format = d3.format(",d"), color = d3.scale.category20c();
             var bubble = d3.layout.pack()
@@ -44,21 +35,21 @@ var Chart;
                 .attr("height", diameter)
                 .attr("class", "bubble center-block");
             var flattened = [];
-            data.forEach(function (doc) {
+            data.forEach(doc => {
                 flattened = flattened.concat(doc.data);
             });
-            var datekey = "$.x";
-            var docsByDate = Enumerable.From(flattened)
+            let datekey = "$.x";
+            let docsByDate = Enumerable.From(flattened)
                 .GroupBy(datekey, null, function (key, g) {
                 return {
                     packageName: key,
                     children: { className: key, value: g.Count() }
                 };
             });
-            var root = new Object();
-            var children = [];
-            docsByDate.ForEach(function (doc) {
-                var child = new Object();
+            let root = new Object();
+            let children = [];
+            docsByDate.ForEach(doc => {
+                let child = new Object();
                 child.value = doc.children.value;
                 child.depth = 0;
                 child.packageName = doc.packageName;
@@ -82,9 +73,9 @@ var Chart;
                 .style("text-anchor", "middle")
                 .text(function (d) { return d.className; });
             this.element.style("height", diameter + "px");
-        };
+        }
         // Returns a flattened hierarchy containing all leaf nodes under the root.
-        BubbleChart.prototype.classes = function (root) {
+        classes(root) {
             var classes = [];
             function recurse(name, node) {
                 if (node.children)
@@ -94,14 +85,13 @@ var Chart;
             }
             recurse(null, root);
             return { children: classes };
-        };
-        return BubbleChart;
-    }(Base));
+        }
+    }
     Chart.BubbleChart = BubbleChart;
 })(Chart || (Chart = {}));
-var authorKey = "$.EnemyUserName";
-var datekey = "$.Status";
-var docsByAuthor = Enumerable.From(model)
+let authorKey = "$.EnemyUserName";
+let datekey = "$.Status";
+let docsByAuthor = Enumerable.From(model)
     .GroupBy(authorKey, null, function (key, g) {
     return {
         author: key,
@@ -110,10 +100,10 @@ var docsByAuthor = Enumerable.From(model)
 })
     .ToArray();
 var data = [];
-docsByAuthor.forEach(function (element) {
+docsByAuthor.forEach(element => {
     var byAuth = [];
-    var desc = element.enemy;
-    var docsByDate = Enumerable.From(element.docs)
+    let desc = element.enemy;
+    let docsByDate = Enumerable.From(element.docs)
         .GroupBy(datekey, null, function (key, g) {
         return {
             status: key,
@@ -121,7 +111,7 @@ docsByAuthor.forEach(function (element) {
         };
     })
         .ToArray();
-    docsByDate.forEach(function (docByDate) {
+    docsByDate.forEach(docByDate => {
         byAuth.push({ x: docByDate.status, y: docByDate.docs.Count(), z: docByDate.id });
     });
     data.push({ desc: desc, data: byAuth });

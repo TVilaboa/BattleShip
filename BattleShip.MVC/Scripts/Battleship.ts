@@ -53,6 +53,7 @@ class Ship {
         this.lifes = lifes;
         this.name = name;
         this.size = lifes;
+        this.position = new BoardPosition();
     }
 
     addEvent(name: string, eventFunction: any, condition: boolean) {
@@ -162,12 +163,12 @@ class Game {
     BOARD_INDEX : number = 10;
     GAMEBOARD: HTMLElement = document.getElementById('gameboard');
     DOCKS: HTMLElement = document.getElementById('docks');
-    game : Game;
+    //game : Game;
     ships: Array<Ship> = new Array<Ship>();
 
     constructor() {
         this.createGame();
-        Game = this;
+        //Game = this;
     }
 
     setMap() {
@@ -192,7 +193,7 @@ class Game {
             shipOnArray.getPosition().setYPosition(parseInt(cell.id.split('-')[0]));
 
             //ship.style.background = 'orange';
-            let image = '@Url.Content("~/Content/Images/ship.png")';
+            let image = '/Content/Images/ship.png';
 
             ship.style.backgroundImage = "url('" + image + "')";
 
@@ -248,7 +249,18 @@ class Game {
 
                 // create a new div HTML element for each grid square and make it the right size
                 var square: Cell = new Cell(j, i);
-                //@AddCellTiltle();
+                if (i == 0 && j == 0) {
+                    square.getElement().innerHTML = '<h1 class="left-cell-title"><span>0</span></h1><h1 class="center-cell-title" style="margin-top: -40px !important"><span>0</span></h1>'
+                }
+                else if (i == 0) {
+                    square.getElement().innerHTML = `
+        <h1 class="left-cell-title">
+            <span>${j}</span></h1>`;
+                } else if (j == 0) {
+                    square.getElement().innerHTML = `
+        <h1 class="center-cell-title">
+            <span>${i}</span></h1>`;
+                }
                 this.GAMEBOARD.appendChild(square.getElement());
                 
                 square.addEvent('dragenter', this.drag_enter, false);
@@ -289,8 +301,9 @@ class Game {
 
     addToDocks(ship: Ship) {
         this.ships.push(ship);
-        $('#' + ship.getElement().id).on('dragstart', this.drag_start);
+        
         this.DOCKS.appendChild(ship.getElement());
+        $('#' + ship.getElement().id).on('dragstart', this.drag_start);
     }
 
     //Event Handlers defined
@@ -314,7 +327,7 @@ class Game {
         }
     }
 
-    drag_start(event) {
+    drag_start = (event) =>  {
         var style = window.getComputedStyle(event.target, null);
         event.originalEvent.dataTransfer.setData("text/plain", event.target.id);
     }
@@ -338,10 +351,10 @@ class Game {
             cell.className = 'cell hovered';
     }
 
-    drop(event) {
+    drop = (event) => {
         const ship = document.getElementById(event.dataTransfer.getData("text/plain"));
         const cell = document.getElementById(event.target.id);
-        game.setShip(ship, cell);
+        this.setShip(ship, cell);
 
         event.preventDefault();
         return false;
@@ -417,6 +430,8 @@ class Game {
             shipInArray.setIsOnXAxis(false);
         }
     }
+
+
 
 }
 
