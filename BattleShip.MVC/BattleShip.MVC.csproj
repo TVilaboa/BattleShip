@@ -284,7 +284,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <Content Include="Scripts\game\game.js" />
-    <Content Include="Scripts\game\tsconfig.json" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -370,8 +369,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\Data.ts" />
-    <TypeScriptCompile Include="Scripts\game\battleship.ts" />
-    <TypeScriptCompile Include="Scripts\game\helloWorld.ts" />
+    <TypeScriptCompile Include="Scripts\Battleship.ts" />
     <TypeScriptCompile Include="Scripts\linq.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\d3\d3.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
