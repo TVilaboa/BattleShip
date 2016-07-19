@@ -253,7 +253,9 @@
     <Content Include="Content\Images\miss.png" />
     <Content Include="Content\Images\Sea-ship-war-planes_1600x1200.jpg" />
     <Content Include="Content\Images\ship.png" />
+    <Content Include="Content\Images\ship_vertical.png" />
     <Content Include="Content\Images\spin.gif" />
+    <Content Include="Content\Images\USS-Freedom_2544812b.jpg" />
     <Content Include="Content\NoMoreTables.css" />
     <Content Include="Content\pnotify.custom.min.css" />
     <Content Include="Content\Sounds\Big Explosion Effect Video Mp4 HD Sound.mp3" />
