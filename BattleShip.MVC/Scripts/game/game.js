@@ -31,7 +31,7 @@ function showNotification(text) {
         addclass: "stack-modal",
         desktop: {
             desktop: document.hidden,
-            icon: '@Url.Content("~/Content/Images/Sea-ship-war-planes_1600x1200.jpg")'
+            icon: '/Content/Images/Sea-ship-war-planes_1600x1200.jpg)'
         }
     })).get().click(function (e) {
         if ($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target))
@@ -96,44 +96,49 @@ function setShips(ships) {
          
 }
 
-$(function() {
+document.addEventListener('DOMContentLoaded', function () {
 
-    // Reference the auto-generated proxy for the hub.
-    game = $.connection.gameHub;
-    game.client.wait = wait;
-    game.client.createGame = createGame;
-    // Create a function that the hub can call back to display messages.
-    game.client.addNewMessageToPage = addNewMessageToPage;
-    game.client.receiveHitResponse = receiveHitResponse;
-    game.client.beginTurn = beginTurn;
-    game.client.startGame = startGame;
-    game.client.renderHit = renderHit;
-    game.client.buildBoard = buildBoard;
-    game.client.buildFireBoard = buildFireBoard;
-    game.client.setShips = setShips;
-    // Get the user name and store it to prepend to messages.
-    $('#displayname').val('@User.Identity.GetUserName()');
-    // Set initial focus to message input box.
-    $('#message').focus();
-    // Start the connection.
-    $.connection.hub.start()
-        .done(function() {
-            $('#sendmessage')
-                .click(function() {
-                    // Call the Send method on the hub.
-                    game.server.send($('#displayname').val(), $('#message').val());
-                    // Clear text box and reset focus for next comment.
-                    $('#message').val('').focus();
-                });
-            game.server.joined();
-        });
-    $.connection.hub.disconnected(function() {
-        setTimeout(function() {
-            $.connection.hub.start();
-        },
-            2000);
-    });
+    createGame();
 });
+
+//$(function() {
+
+//    // Reference the auto-generated proxy for the hub.
+//    game = $.connection.gameHub;
+//    game.client.wait = wait;
+//    game.client.createGame = createGame;
+//    // Create a function that the hub can call back to display messages.
+//    game.client.addNewMessageToPage = addNewMessageToPage;
+//    game.client.receiveHitResponse = receiveHitResponse;
+//    game.client.beginTurn = beginTurn;
+//    game.client.startGame = startGame;
+//    game.client.renderHit = renderHit;
+//    game.client.buildBoard = buildBoard;
+//    game.client.buildFireBoard = buildFireBoard;
+//    game.client.setShips = setShips;
+//    // Get the user name and store it to prepend to messages.
+//    $('#displayname').val('@User.Identity.GetUserName()');
+//    // Set initial focus to message input box.
+//    $('#message').focus();
+//    // Start the connection.
+//    $.connection.hub.start()
+//        .done(function() {
+//            $('#sendmessage')
+//                .click(function() {
+//                    // Call the Send method on the hub.
+//                    game.server.send($('#displayname').val(), $('#message').val());
+//                    // Clear text box and reset focus for next comment.
+//                    $('#message').val('').focus();
+//                });
+//            game.server.joined();
+//        });
+//    $.connection.hub.disconnected(function() {
+//        setTimeout(function() {
+//            $.connection.hub.start();
+//        },
+//            2000);
+//    });
+//});
 
 // This optional function html-encodes messages for display in the page.
 function htmlEncode(value) {
@@ -176,7 +181,7 @@ function buildBoard() {
 
             // create a new div HTML element for each grid square and make it the right size
             var square = document.createElement("div");
-            @AddCellTiltle()
+            AddCellTitle(square);
             GAMEBOARD.appendChild(square);
 
             // give each div element a unique id based on its row and column, like "s00"
@@ -205,7 +210,7 @@ function buildFireBoard() {
         for (j = 0; j < BOARD_INDEX; j++) {
             // create a new div HTML element for each grid square and make it the right size
             var square = document.createElement("div");
-            @AddCellTiltle()
+            AddCellTitle(square);
             newBoard.appendChild(square);
 
             // give each div element a unique id based on its row and column, like "s00"
@@ -262,7 +267,7 @@ function buildship(size, container, position) {
     container.style.top = topPosition + 'px';
     container.style.left = leftPosition + 'px';
     container.style.width = size * SIZE + 'px';
-    let image = '@Url.Content("~/Content/Images/ship.png")';
+    let image = '/Content/Images/ship.png';
 
     container.style.backgroundImage = "url('" + image + "')";
 
@@ -288,7 +293,17 @@ function rotate(event) {
 
         ship.style.height = width;
         ship.style.width = height;
-        ship.style.backgroundSize = height + "px " + width + "px";
+        ship.style.backgroundSize = ship.style.width + " " + ship.style.height;
+
+        let horizontal = '/Content/Images/ship.png';
+
+        let vertical = '/Content/Images/ship_vertical.png';
+
+        if (getIntHeight(ship) > getIntWidth(ship))
+            ship.style.backgroundImage = "url('" + vertical + "')";
+        else
+            ship.style.backgroundImage = "url('" + horizontal + "')";
+
     } else {
         showNotification("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
         //$('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
@@ -341,20 +356,23 @@ function setShip(ship, cell) {
         shipOnArray.position.YPosition = cell.id.split('-')[0];
 
         //ship.style.background = 'orange';
-        let image = '@Url.Content("~/Content/Images/ship.png")';
+        let horizontal = '/Content/Images/ship.png';
+        let vertical = '/Content/Images/ship_vertical.png';
 
-        ship.style.backgroundImage = "url('" + image + "')";
+
 
         var shipHeight = getIntHeight(ship);
         var shipWidth = getIntWidth(ship);
         ship.style.backgroundSize = shipWidth + "px " + shipHeight + "px";
-        if (ship.style.width > ship.style.height) {
+        if (shipWidth > shipHeight) {
+            ship.style.backgroundImage = "url('" + horizontal + "')";
             var cellsRemaining = (shipWidth / SIZE) - 1;
             var origin = cell.id.split('-');
             for (i = 1; i <= cellsRemaining; i++) {
                 let cellI = document.getElementById(origin[0] + '-' + (parseInt(origin[1]) + i));
             }
         } else {
+            ship.style.backgroundImage = "url('" + vertical + "')";
             var cellsRemaining = (shipHeight / SIZE) - 1;
             var origin = cell.id.split('-');
             for (i = 1; i <= cellsRemaining; i++) {
@@ -362,6 +380,7 @@ function setShip(ship, cell) {
             }
 
         }
+        ship.style.backgroundRepeat = 'no-repeat';
         $('#' + ship.id).off('click').on('click', rotate);
 
         ship.style.top = 0;
@@ -519,7 +538,7 @@ function receiveHitResponse(coordinates, isMyHit, wasHit, hasGameEnded, isShipSu
     var color;
     var image;
     if (wasHit) {
-        image = '@Url.Content("~/Content/Images/1466050855_Explosion.png")';
+        image = '/Content/Images/1466050855_Explosion.png';
         $('#explosionSound').trigger('play');
         if (isMyHit && isShipSunken) {
             showNotification("You sunk and enemy ship!!");
@@ -529,7 +548,7 @@ function receiveHitResponse(coordinates, isMyHit, wasHit, hasGameEnded, isShipSu
                     
         }
     } else {
-        image = '@Url.Content("~/Content/Images/1466050417_ksplash.png")';
+        image = '/Content/Images/1466050417_ksplash.png';
         $('#waterSound').trigger('play');
     }
     renderHit(coordinates, isMyHit,image);
@@ -563,4 +582,19 @@ function beginTurn() {
 
 function endTurn() {
     game.server.endTurn();
+}
+
+function AddCellTitle(square) {
+    if (i == 0 && j == 0) {
+        square.innerHTML = '<h1 class="left-cell-title"><span>0</span></h1><h1 class="center-cell-title" style="margin-top: -40px !important"><span>0</span></h1>'
+    }
+    else if (i == 0) {
+        square.innerHTML = `
+        <h1 class="left-cell-title">
+            <span>${j}</span></h1>`;
+    } else if (j == 0) {
+        square.innerHTML = `
+        <h1 class="center-cell-title">
+            <span>${i}</span></h1>`;
+    }
 }

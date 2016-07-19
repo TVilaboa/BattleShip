@@ -370,8 +370,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\Data.ts" />
-    <TypeScriptCompile Include="Scripts\game\battleship.ts" />
-    <TypeScriptCompile Include="Scripts\game\helloWorld.ts" />
+    <TypeScriptCompile Include="Scripts\Battleship.ts" />
     <TypeScriptCompile Include="Scripts\linq.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\d3\d3.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
