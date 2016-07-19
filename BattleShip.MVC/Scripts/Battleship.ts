@@ -193,21 +193,21 @@ class Game {
             shipOnArray.getPosition().setXPosition(parseInt(cell.id.split('-')[1]));
             shipOnArray.getPosition().setYPosition(parseInt(cell.id.split('-')[0]));
 
-            //ship.style.background = 'orange';
-            let image = '/Content/Images/ship.png';
-
-            ship.style.backgroundImage = "url('" + image + "')";
+            let horizontal = '/Content/Images/ship.png';
+            let vertical = '/Content/Images/ship_vertical.png';
 
             var shipHeight = this.getIntHeight(ship);
             var shipWidth = this.getIntWidth(ship);
             ship.style.backgroundSize = shipWidth + "px " + shipHeight + "px";
             if (ship.style.width > ship.style.height) {
+                ship.style.backgroundImage = "url('" + horizontal + "')";
                 var cellsRemaining = (shipWidth / this.SIZE) - 1;
                 var origin = cell.id.split('-');
                 for (var i : number = 1; i <= cellsRemaining; i++) {
                     let cellI = document.getElementById(origin[0] + '-' + (parseInt(origin[1]) + i));
                 }
             } else {
+                ship.style.backgroundImage = "url('" + vertical + "')";
                 var cellsRemaining = (shipHeight / this.SIZE) - 1;
                 var origin = cell.id.split('-');
                 for (i = 1; i <= cellsRemaining; i++) {
@@ -215,7 +215,7 @@ class Game {
                 }
 
             }
-            $('#' + ship.id).off('click').on('click', this.rotate);
+            ship.style.backgroundRepeat = 'no-repeat';
 
             ship.style.top = '0';
             ship.style.left = '0';
@@ -224,6 +224,7 @@ class Game {
             this.handleShipPositioning(ship, ship.parentElement);
 
             shipOnArray.setHasBeenSet(true);
+            $('#' + ship.id).off('click').on('click', this.rotate);
 
         } else {
             //showNotification("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
@@ -372,11 +373,17 @@ class Game {
 
             ship.style.height = width;
             ship.style.width = height;
-            ship.style.backgroundSize = height + "px " + width + "px";
+            ship.style.backgroundSize = ship.style.width + " " + ship.style.height;
+
+            let horizontal = '/Content/Images/ship.png';
+            let vertical = '/Content/Images/ship_vertical.png';
+
+            if (this.getIntHeight(ship) > this.getIntWidth(ship))
+                ship.style.backgroundImage = "url('" + vertical + "')";
+            else
+                ship.style.backgroundImage = "url('" + horizontal + "')";
         } else {
             //showNotification("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
-            //$('#statusModal').text("The Gameboard has it's limits; you must learn not to anger the Gameboard...");
-            //$('#notificationModal').modal('show');
         }
     }
 
@@ -414,7 +421,7 @@ class Game {
     }
 
     //Validation functions
-    validateRotation(ship: HTMLElement) {
+    validateRotation = (ship: HTMLElement) =>{
         var result;
 
         var cell = ship.parentElement;
@@ -484,14 +491,22 @@ class Game {
         }
     }
 
-    //Playing
-
-    fire(event) {
-    var cell = document.getElementById(event.target.id);
-    var position = new BoardPosition();
-    position.setXPosition(parseInt(cell.id.split('-')[1].split(' ')[0]));
-    position.setYPosition(parseInt(cell.id.split('-')[0]));
-    this.sendHitToServer(position);
+    showNotification(text) {
+    (new PNotify({
+        title: 'Notification',
+        text: text,
+        after_init: function (notice) {
+            notice.attention('rubberBand');
+        },
+        addclass: "stack-modal",
+        desktop: {
+            desktop: document.hidden,
+            icon: '/Content/Images/Sea-ship-war-planes_1600x1200.jpg)'
+        }
+    })).get().click(function (e) {
+        if ($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target))
+            return;
+    });
 }
 
 sunkShip() {
