@@ -121,6 +121,22 @@ class Game {
         this.DOCKS = document.getElementById('docks');
         //game : Game;
         this.ships = new Array();
+        //Event Handlers defined
+        this.rotate = (event) => {
+            event.preventDefault();
+            var ship = document.getElementById(event.target.id);
+            if (this.validateRotation(ship)) {
+                var shipInArray = this.ships.filter(s => s.getName() === event.target.id)[0];
+                shipInArray.setIsOnXAxis(!shipInArray.getIsOnXAxis());
+                var height = ship.style.height == "" ? "40px" : ship.style.height;
+                var width = ship.style.width;
+                ship.style.height = width;
+                ship.style.width = height;
+                ship.style.backgroundSize = height + "px " + width + "px";
+            }
+            else {
+            }
+        };
         this.drag_start = (event) => {
             var style = window.getComputedStyle(event.target, null);
             event.originalEvent.dataTransfer.setData("text/plain", event.target.id);
@@ -239,22 +255,6 @@ class Game {
         this.ships.push(ship);
         this.DOCKS.appendChild(ship.getElement());
         $('#' + ship.getElement().id).on('dragstart', this.drag_start);
-    }
-    //Event Handlers defined
-    rotate(event) {
-        event.preventDefault();
-        var ship = document.getElementById(event.target.id);
-        if (this.validateRotation(ship)) {
-            var shipInArray = this.ships.filter(s => s.getName() === event.target.id)[0];
-            shipInArray.setIsOnXAxis(!shipInArray.getIsOnXAxis());
-            var height = ship.style.height == "" ? "40px" : ship.style.height;
-            var width = ship.style.width;
-            ship.style.height = width;
-            ship.style.width = height;
-            ship.style.backgroundSize = height + "px " + width + "px";
-        }
-        else {
-        }
     }
     drag_over(event) {
         event.preventDefault();

@@ -372,10 +372,13 @@
     <TypeScriptCompile Include="Scripts\Data.ts" />
     <TypeScriptCompile Include="Scripts\Battleship.ts" />
     <TypeScriptCompile Include="Scripts\linq.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\bootstrap\bootstrap.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\d3\d3.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\linq\linq.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\linq\linq.jquery.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\signalr\signalr-1.0.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\signalr\signalr.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

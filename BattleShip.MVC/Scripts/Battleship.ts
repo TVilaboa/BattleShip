@@ -165,6 +165,7 @@ class Game {
     DOCKS: HTMLElement = document.getElementById('docks');
     //game : Game;
     ships: Array<Ship> = new Array<Ship>();
+    hub : any;
 
     constructor() {
         this.createGame();
@@ -274,10 +275,62 @@ class Game {
     }
 
     startGame() {
+        $("#actions").css("visibility", "hidden");
+        this.GAMEBOARD.style.opacity = "0.5";
+        this.GAMEBOARD.parentElement.className = 'col-md-6';
+        var docks = document.getElementById('docks');
+        var parent = docks.parentElement;
+        parent.parentElement.removeChild(parent);
+        parent.removeChild(docks);
 
+        this.buildFireBoard();
     }
 
-    buildFireBoard() { }
+    buildFireBoard() {
+        //document.removeChild(document.getElementById('docks'));
+        var newBoard = document.getElementById('fireboard').children[0];
+        newBoard.innerHTML = "";
+        for (var i = 0; i < this.BOARD_INDEX; i++) {
+            for (var j = 0; j < this.BOARD_INDEX; j++) {
+                // create a new div HTML element for each grid square and make it the right size
+                var square: Cell = new Cell(j, i);
+                if (i == 0 && j == 0) {
+                    square.getElement().innerHTML = '<h1 class="left-cell-title"><span>0</span></h1><h1 class="center-cell-title" style="margin-top: -40px !important"><span>0</span></h1>'
+                }
+                else if (i == 0) {
+                    square.getElement().innerHTML = `
+        <h1 class="left-cell-title">
+            <span>${j}</span></h1>`;
+                } else if (j == 0) {
+                    square.getElement().innerHTML = `
+        <h1 class="center-cell-title">
+            <span>${i}</span></h1>`;
+                }
+                newBoard.appendChild(square.getElement());
+
+                // give each div element a unique id based on its row and column, like "s00"
+                square.getElement().id = this.genCellId(j, i) + " f";
+
+                // set each grid square's coordinates: multiples of the current row or column number
+                var topPosition = j * this.SIZE;
+                var leftPosition = i * this.SIZE;
+
+                // use CSS absolute positioning to place each grid square on the page
+                square.getElement().style.top = topPosition + 'px';
+                square.getElement().style.left = leftPosition + 'px';
+                square.getElement().className = 'cell normal';
+
+                square.getElement().addEventListener('mouseenter', this.drag_enter, false);
+                square.getElement().addEventListener('mouseleave', this.drag_leave, false);
+                square.getElement().addEventListener('click', this.fire, false);
+            }
+        }
+        newBoard.parentElement.parentElement.className = 'col-md-6';
+    }
+
+     genCellId(j, i) {
+    return '' + j + '-' + i;
+};
 
     loadShips() {
 
@@ -307,7 +360,7 @@ class Game {
     }
 
     //Event Handlers defined
-    rotate(event) {
+    rotate = (event) => {
         event.preventDefault();
 
         var ship = document.getElementById(event.target.id);
@@ -431,11 +484,129 @@ class Game {
         }
     }
 
+    //Playing
 
+    fire(event) {
+    var cell = document.getElementById(event.target.id);
+    var position = new BoardPosition();
+    position.setXPosition(parseInt(cell.id.split('-')[1].split(' ')[0]));
+    position.setYPosition(parseInt(cell.id.split('-')[0]));
+    this.sendHitToServer(position);
+}
+
+sunkShip() {
+    $('#sinkEnemyDestroyerSound').trigger('play');
+}
+
+renderHit(coordinates, isMyHit, image) {
+    if (isMyHit) { //Dibujar respuesta al tiro que hizo el jugador
+
+        document.getElementById(coordinates.YPosition + '-' + coordinates.XPosition + ' f')
+            .style.backgroundImage = "url('" + image + "')";
+        document.getElementById(coordinates
+            .YPosition +
+            '-' +
+            coordinates.XPosition +
+            ' f')
+            .style.backgroundSize = "40px 40px";
+    } else {
+
+        var fill = document.createElement('div');
+        fill.style.backgroundSize = "40px 40px";
+        fill.style.backgroundImage = "url('" + image + "')";
+        fill.style.zIndex = "2";
+        fill.style.top = "0px;";
+        fill.style.left = "0px;";
+        fill.className = "cell normal";
+
+        document.getElementById(coordinates.YPosition + '-' + coordinates.XPosition).appendChild(fill);
+    }
+}
+
+receiveHitResponse(coordinates, isMyHit, wasHit, hasGameEnded, isShipSunken) {
+    var color;
+    var image;
+    if (wasHit) {
+        image = '/Content/Images/1466050855_Explosion.png';
+        $('#explosionSound').trigger('play');
+        if (isMyHit && isShipSunken) {
+            this.showNotification("You sunk and enemy ship!!");
+            setTimeout(this.sunkShip, 1000);
+
+        }
+    } else {
+        image = '/Content/Images/1466050417_ksplash.png';
+        $('#waterSound').trigger('play');
+    }
+    this.renderHit(coordinates, isMyHit, image);
+    if (hasGameEnded) {
+        if (isMyHit) { //Gano
+            $("#statusModal").text("You win!!! Congratulations!!");
+            $('#notificationModalContent').css("background-Color", "Green");
+
+        } else { //Perdio
+            $("#statusModal").text("You lost!!!");
+            $('#notificationModalContent').css("background-Color", "Red");
+
+        }
+        $('#notificationModal').modal('show');
+        $('#btnPlayAgain').show();
+    } else if (isMyHit) {
+        this.endTurn();
+    }
+};
+
+sendHitToServer(coordinates) {
+    this.hub.server.hit(coordinates);
+}
+
+beginTurn() {
+    $("#waiter").css("visibility", "hidden");
+    this.showNotification("Its your turn now!!");
+}
+
+endTurn() {
+    this.hub.server.endTurn();
+}
 
 }
 
 document.addEventListener('DOMContentLoaded', function () {
 
     var game = new Game();
+    // Reference the auto-generated proxy for the hub.
+    game.hub = $.connection.gameHub;
+    game.hub.client.wait = this.wait;
+    game.hub.client.createhub = this.createhub;
+    // Create a function that the hub can call back to display messages.
+    game.hub.client.addNewMessageToPage = this.addNewMessageToPage;
+    game.hub.client.receiveHitResponse = this.receiveHitResponse;
+    game.hub.client.beginTurn = this.beginTurn;
+    game.hub.client.starthub = this.starthub;
+    game.hub.client.renderHit = this.renderHit;
+    game.hub.client.buildBoard = this.buildBoard;
+    game.hub.client.buildFireBoard = this.buildFireBoard;
+    game.hub.client.setShips = this.setShips;
+    // Get the user name and store it to prepend to messages.
+    $('#displayname').val('@User.Identity.GetUserName()');
+    // Set initial focus to message input box.
+    $('#message').focus();
+    // Start the connection.
+    $.connection.gameHub.start()
+        .done(function () {
+            $('#sendmessage')
+                .click(function () {
+                    // Call the Send method on the hub.
+                    game.hub.server.send($('#displayname').val(), $('#message').val());
+                    // Clear text box and reset focus for next comment.
+                    $('#message').val('').focus();
+                });
+            game.hub.server.joined();
+        });
+    $.connection.hub.disconnected(function () {
+        setTimeout(function () {
+            $.connection.hub.start();
+        },
+            2000);
+    });
 });
